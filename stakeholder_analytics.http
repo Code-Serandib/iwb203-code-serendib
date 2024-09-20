@@ -1,0 +1,38 @@
+POST http://localhost:9090/engagement-metrics/analytics
+content-type: application/json
+
+{
+    "power": 5.0, 
+    "legitimacy": 6.0, 
+    "urgency": 4.0, 
+    "stakeholder_type": "EMPLOYEE"
+}
+
+### get request
+GET http://localhost:9090/engagement-metrics/analytics
+
+### post for game theory
+POST http://localhost:9090/engagement-metrics/gt_analytics
+content-type: application/json
+
+{
+    "players_names": ["Mike", "Amy"],
+    "atr_count": [2, 2],
+    "atr": ["up", "down", "left", "right"],
+    "values": [8, 6, 2, 4, 1, 7, 3, 9]
+}
+
+### for three players
+# {
+#     "players_names": ["Mike", "Amy", "John"],
+#     "atr_count": [2, 2, 2],
+#     "atr": ["up", "down", "left", "right", "front", "back"],
+#     "values": [8, 6, 2, 4, 1, 7, 3, 9, 5, 6, 2, 3, 5, 8, 0, 4, 7, 9, 9, 4, 6, 2, 1, 5]
+# }
+### for two players
+# {
+#     "players_names": ["Mike", "Amy"],
+#     "atr_count": [2, 2],
+#     "atr": ["up", "down", "left", "right"],
+#     "values": [8, 6, 2, 4, 1, 7, 3, 9]
+# }
