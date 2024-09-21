@@ -1,4 +1,4 @@
-POST http://localhost:9090/engagement-metrics/analytics
+POST http://localhost:9090/relation-depth/analytics
 content-type: application/json
 
 {
@@ -9,10 +9,10 @@ content-type: application/json
 }
 
 ### get request
-GET http://localhost:9090/engagement-metrics/analytics
+GET http://localhost:9090/relation-depth/analytics
 
 ### post for game theory
-POST http://localhost:9090/engagement-metrics/gt_analytics
+POST http://localhost:9090/relation-depth/gt_analytics
 content-type: application/json
 
 {
@@ -38,7 +38,7 @@ content-type: application/json
 # }
 
 ### social exchange
-POST http://localhost:9090/engagement-metrics/relationshipValue
+POST http://localhost:9090/relation-depth/relationshipValue
 content-type: application/json
 
 {
