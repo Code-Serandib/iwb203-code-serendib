@@ -1,0 +1,36 @@
+### post for calculate risk score
+POST http://localhost:9090/risk-modelling/calculate_risk_score
+content-type: application/json
+
+{
+    "Ws": 0.5,
+    "We": 0.7,
+    "Si": 0.9,
+    "Ei": 0.6
+}
+
+### post for calculate project risk
+POST http://localhost:9090/risk-modelling/calculate_project_risk
+content-type: application/json
+
+{
+    "riskInputs": [
+        {"Ws": 0.5, "We": 0.5, "Si": 0.7, "Ei": 0.8},
+        {"Ws": 0.6, "We": 0.4, "Si": 0.5, "Ei": 0.6},
+        {"Ws": 0.7, "We": 0.3, "Si": 0.4, "Ei": 0.5}
+    ],
+    "influences": [0.9, 0.7, 0.8]
+}
+
+### post for engagement drop alert
+POST http://localhost:9090/risk-modelling/engagement_drop_alert
+content-type: application/json
+
+{
+    "riskInputs": [
+        {"Ws": 0.5, "We": 0.5, "Si": 0.7, "Ei": 0.8},
+        {"Ws": 0.6, "We": 0.4, "Si": 0.5, "Ei": 0.4},
+        {"Ws": 0.7, "We": 0.3, "Si": 0.4, "Ei": 0.2}
+    ],
+    "Te": 0.5
+}
