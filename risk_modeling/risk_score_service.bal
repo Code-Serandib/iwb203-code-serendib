@@ -9,7 +9,7 @@ public function calculate(RiskInput riskInput) returns float {
     return riskScore;
 }
 
-public function pretendProjectRiskLevel(float riskScore) returns string {
+public function pretendRiskLevel(float riskScore) returns string {
     string riskLevel;
 
     if (riskScore <= 0.3) {
