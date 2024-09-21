@@ -1,4 +1,4 @@
-### post for calculate risk score
+### post for calculate engament priority score
 POST http://localhost:9090/engagement-metrics/calculate_eps
 content-type: application/json
 
@@ -11,7 +11,7 @@ content-type: application/json
     "Si": 0.9
 }
 
-### post for calculate risk score
+### post for calculate balanced score metrics
 POST http://localhost:9090/engagement-metrics/calculate_bsc
 content-type: application/json
 
@@ -26,7 +26,7 @@ content-type: application/json
     "Li": 0.9
 }
 
-### post for calculate risk score
+### post for calculate total engament score
 POST http://localhost:9090/engagement-metrics/calculate_tes
 content-type: application/json
 
