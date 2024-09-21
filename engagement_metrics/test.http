@@ -36,3 +36,12 @@ content-type: application/json
 #     "atr": ["up", "down", "left", "right"],
 #     "values": [8, 6, 2, 4, 1, 7, 3, 9]
 # }
+
+### social exchange
+POST http://localhost:9090/engagement-metrics/relationshipValue
+content-type: application/json
+
+{
+    "benefit": 100,
+    "cost": 30
+}
