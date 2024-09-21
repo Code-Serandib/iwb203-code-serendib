@@ -1,7 +1,7 @@
 public function calculateProjectRisk(RiskInput[] riskInputs, float[] influences) returns float|error {
     if (riskInputs.length() != influences.length()) {
         return error("Mismatch between number of risk scores and influences.");
-    }
+    } 
 
     float totalProjectRisk = 0.0;
 
@@ -14,7 +14,7 @@ public function calculateProjectRisk(RiskInput[] riskInputs, float[] influences)
     return totalProjectRisk;
 }
 
-function pretendRiskLevel(float totalRisk) returns string {
+function pretendProjectRiskLevel(float totalRisk) returns string {
     string riskLevel;
     if (totalRisk < 0.3) {
         riskLevel = "Low";
