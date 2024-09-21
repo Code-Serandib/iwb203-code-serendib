@@ -1,0 +1,38 @@
+### post for calculate risk score
+POST http://localhost:9090/engagement-metrics/calculate_eps
+content-type: application/json
+
+{
+    "We": 0.5,
+    "Wi": 0.3,
+    "Ws": 0.2,
+    "Ei": 0.8,
+    "Ii": 0.6,
+    "Si": 0.9
+}
+
+### post for calculate risk score
+POST http://localhost:9090/engagement-metrics/calculate_bsc
+content-type: application/json
+
+{
+    "Wf": 0.4,
+    "Wc": 0.3,
+    "Wp": 0.2,
+    "Wl": 0.1,
+    "Fi": 0.7,
+    "Ci": 0.8,
+    "Pi": 0.6,
+    "Li": 0.9
+}
+
+### post for calculate risk score
+POST http://localhost:9090/engagement-metrics/calculate_tes
+content-type: application/json
+
+{
+    "alpha": 0.6,
+    "beta": 0.4,
+    "EPSi": 0.7,
+    "BSCi": 0.8
+}
