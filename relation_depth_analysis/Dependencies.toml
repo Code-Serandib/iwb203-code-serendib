@@ -260,7 +260,7 @@ dependencies = [
 [[package]]
 org = "ballerina"
 name = "time"
-version = "2.5.0"
+version = "2.4.0"
 dependencies = [
 	{org = "ballerina", name = "jballerina.java"}
 ]
@@ -287,7 +287,7 @@ modules = [
 
 [[package]]
 org = "oshada_kavintha"
-name = "engagement_metrics"
+name = "relation_depth_analysis"
 version = "0.1.0"
 dependencies = [
 	{org = "ballerina", name = "http"},
@@ -295,6 +295,6 @@ dependencies = [
 	{org = "ballerinai", name = "observe"}
 ]
 modules = [
-	{org = "oshada_kavintha", packageName = "engagement_metrics", moduleName = "engagement_metrics"}
+	{org = "oshada_kavintha", packageName = "relation_depth_analysis", moduleName = "relation_depth_analysis"}
 ]
 
