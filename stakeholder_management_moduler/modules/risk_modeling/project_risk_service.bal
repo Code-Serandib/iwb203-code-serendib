@@ -14,7 +14,7 @@ public function calculateProjectRisk(RiskInput[] riskInputs, float[] influences)
     return totalProjectRisk;
 }
 
-function pretendProjectRiskLevel(float totalRisk) returns string {
+public function pretendProjectRiskLevel(float totalRisk) returns string {
     string riskLevel;
     if (totalRisk < 0.3) {
         riskLevel = "Low";
@@ -26,7 +26,7 @@ function pretendProjectRiskLevel(float totalRisk) returns string {
     return riskLevel;
 }
 
-function determineAction(string riskLevel) returns string {
+public function determineAction(string riskLevel) returns string {
     string action;
     if (riskLevel == "Low") {
         action = "Risk is low. No immediate action required.";

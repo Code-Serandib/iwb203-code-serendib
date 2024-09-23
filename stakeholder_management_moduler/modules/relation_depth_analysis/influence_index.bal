@@ -16,6 +16,13 @@ public enum stakeholderType {
     GOVERMENT_AGENT
 };
 
+public type SEmetrics record {|
+    float? power;
+    float? legitimacy;
+    float? urgency;
+    string? stakeholder_type;
+|};
+
 function CalculateInfluence(float power, float legitamacy, float urgency) returns float{
     return (power+legitamacy+urgency) / 3;
 };

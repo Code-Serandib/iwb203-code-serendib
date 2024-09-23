@@ -49,6 +49,18 @@ dependencies = [
 
 [[package]]
 org = "ballerina"
+name = "data.jsondata"
+version = "0.2.0"
+dependencies = [
+	{org = "ballerina", name = "jballerina.java"},
+	{org = "ballerina", name = "lang.object"}
+]
+modules = [
+	{org = "ballerina", packageName = "data.jsondata", moduleName = "data.jsondata"}
+]
+
+[[package]]
+org = "ballerina"
 name = "file"
 version = "1.10.0"
 dependencies = [
@@ -98,6 +110,9 @@ dependencies = [
 	{org = "ballerina", name = "jballerina.java"},
 	{org = "ballerina", name = "lang.value"}
 ]
+modules = [
+	{org = "ballerina", packageName = "io", moduleName = "io"}
+]
 
 [[package]]
 org = "ballerina"
@@ -141,6 +156,15 @@ dependencies = [
 org = "ballerina"
 name = "lang.decimal"
 version = "0.0.0"
+dependencies = [
+	{org = "ballerina", name = "jballerina.java"}
+]
+
+[[package]]
+org = "ballerina"
+name = "lang.error"
+version = "0.0.0"
+scope = "testOnly"
 dependencies = [
 	{org = "ballerina", name = "jballerina.java"}
 ]
@@ -256,8 +280,22 @@ dependencies = [
 
 [[package]]
 org = "ballerina"
+name = "test"
+version = "0.0.0"
+scope = "testOnly"
+dependencies = [
+	{org = "ballerina", name = "jballerina.java"},
+	{org = "ballerina", name = "lang.array"},
+	{org = "ballerina", name = "lang.error"}
+]
+modules = [
+	{org = "ballerina", packageName = "test", moduleName = "test"}
+]
+
+[[package]]
+org = "ballerina"
 name = "time"
-version = "2.5.0"
+version = "2.4.0"
 dependencies = [
 	{org = "ballerina", name = "jballerina.java"}
 ]
@@ -283,14 +321,21 @@ modules = [
 ]
 
 [[package]]
-org = "oshada_kavintha"
-name = "engagement_metrics"
+org = "code_serandib"
+name = "stakeholder_management_moduler"
 version = "0.1.0"
 dependencies = [
+	{org = "ballerina", name = "data.jsondata"},
 	{org = "ballerina", name = "http"},
+	{org = "ballerina", name = "io"},
+	{org = "ballerina", name = "test"},
 	{org = "ballerinai", name = "observe"}
 ]
 modules = [
-	{org = "oshada_kavintha", packageName = "engagement_metrics", moduleName = "engagement_metrics"}
+	{org = "code_serandib", packageName = "stakeholder_management_moduler", moduleName = "stakeholder_management_moduler"},
+	{org = "code_serandib", packageName = "stakeholder_management_moduler", moduleName = "stakeholder_management_moduler.engagement_metrics"},
+	{org = "code_serandib", packageName = "stakeholder_management_moduler", moduleName = "stakeholder_management_moduler.relation_depth_analysis"},
+	{org = "code_serandib", packageName = "stakeholder_management_moduler", moduleName = "stakeholder_management_moduler.risk_modeling"},
+	{org = "code_serandib", packageName = "stakeholder_management_moduler", moduleName = "stakeholder_management_moduler.stakeholder_equilibrium"}
 ]
 
