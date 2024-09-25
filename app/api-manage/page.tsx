@@ -75,7 +75,7 @@ export default function ApiKeyManagement() {
 
   return (
     <Layout>
-    <div className="container mx-auto py-10">
+    <div className="container mx-auto py-4">
       <h1 className="text-3xl font-bold mb-8">API Key Management</h1>
 
       <Card className="mb-8">

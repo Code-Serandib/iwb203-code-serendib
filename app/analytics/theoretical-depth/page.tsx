@@ -1,36 +1,42 @@
 "use client"
 
-import { useState } from "react"
+import { useState, FormEvent } from "react"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Button } from "@/components/ui/button"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Slider } from "@/components/ui/slider"
-import { BarChart2, GitBranch, Handshake} from 'lucide-react'
+import { BarChart2, GitBranch, Handshake } from 'lucide-react'
 import Layout from '@/components/layout/Layout'
 
+type InfluenceValues = {
+  power: number;
+  legitimacy: number;
+  urgency: number;
+};
+
 export default function AnalysisTool() {
-  const [activeTab, setActiveTab] = useState('influence')
+  const [activeTab, setActiveTab] = useState<string>('influence')
+  
   // Influence Index state
-  const [influenceValues, setInfluenceValues] = useState({ power: 0, legitimacy: 0, urgency: 0 })
-  const [stakeholderType, setStakeholderType] = useState("")
-  const [influenceResult, setInfluenceResult] = useState(null)
+  const [influenceValues, setInfluenceValues] = useState<InfluenceValues>({ power: 0, legitimacy: 0, urgency: 0 })
+  const [stakeholderType, setStakeholderType] = useState<string>("")
+  const [influenceResult, setInfluenceResult] = useState<number | null>(null)
 
   // Nash Equilibrium state
-  const [players, setPlayers] = useState([])
-  const [optionCounts, setOptionCounts] = useState([])
-  const [options, setOptions] = useState([])
-  const [payoffs, setPayoffs] = useState([])
-  const [nashResult, setNashResult] = useState(null)
+  const [players, setPlayers] = useState<string[]>([])
+  const [optionCounts, setOptionCounts] = useState<number[]>([])
+  const [options, setOptions] = useState<string[]>([])
+  const [payoffs, setPayoffs] = useState<number[]>([])
+  const [nashResult, setNashResult] = useState<string | null>(null)
 
   // Social Exchange state
-  const [benefit, setBenefit] = useState(0)
-  const [cost, setCost] = useState(0)
-  const [relationshipValue, setRelationshipValue] = useState(null)
+  const [benefit, setBenefit] = useState<number>(0)
+  const [cost, setCost] = useState<number>(0)
+  const [relationshipValue, setRelationshipValue] = useState<number | null>(null)
 
-  const handleInfluenceSubmit = (e) => {
+  const handleInfluenceSubmit = (e: FormEvent) => {
     e.preventDefault()
     // Simulate API call
     setTimeout(() => {
@@ -38,7 +44,7 @@ export default function AnalysisTool() {
     }, 1000)
   }
 
-  const handleNashSubmit = (e) => {
+  const handleNashSubmit = (e: FormEvent) => {
     e.preventDefault()
     // Simulate API call
     setTimeout(() => {
@@ -46,7 +52,7 @@ export default function AnalysisTool() {
     }, 1000)
   }
 
-  const handleSocialExchangeSubmit = (e) => {
+  const handleSocialExchangeSubmit = (e: FormEvent) => {
     e.preventDefault()
     // Simulate API call
     setTimeout(() => {
@@ -94,38 +100,41 @@ export default function AnalysisTool() {
               <form onSubmit={handleInfluenceSubmit} className="space-y-6">
                 <div className="space-y-2">
                   <Label htmlFor="power">Power (0-10)</Label>
-                  <Slider
+                  <Input
                     id="power"
+                    type="number"
                     min={0}
                     max={10}
                     step={0.1}
-                    value={[influenceValues.power]}
-                    onValueChange={(value) => setInfluenceValues({ ...influenceValues, power: value[0] })}
-                    className="[&_[role=slider]]:bg-black"
+                    value={influenceValues.power}
+                    onChange={(e) => setInfluenceValues({ ...influenceValues, power: Number(e.target.value) })}
+                    className="border-black"
                   />
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="legitimacy">Legitimacy (0-10)</Label>
-                  <Slider
+                  <Input
                     id="legitimacy"
+                    type="number"
                     min={0}
                     max={10}
                     step={0.1}
-                    value={[influenceValues.legitimacy]}
-                    onValueChange={(value) => setInfluenceValues({ ...influenceValues, legitimacy: value[0] })}
-                    className="[&_[role=slider]]:bg-black"
+                    value={influenceValues.legitimacy}
+                    onChange={(e) => setInfluenceValues({ ...influenceValues, legitimacy: Number(e.target.value) })}
+                    className="border-black"
                   />
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="urgency">Urgency (0-10)</Label>
-                  <Slider
+                  <Input
                     id="urgency"
+                    type="number"
                     min={0}
                     max={10}
                     step={0.1}
-                    value={[influenceValues.urgency]}
-                    onValueChange={(value) => setInfluenceValues({ ...influenceValues, urgency: value[0] })}
-                    className="[&_[role=slider]]:bg-black"
+                    value={influenceValues.urgency}
+                    onChange={(e) => setInfluenceValues({ ...influenceValues, urgency: Number(e.target.value) })}
+                    className="border-black"
                   />
                 </div>
                 <div className="space-y-2">
@@ -143,6 +152,10 @@ export default function AnalysisTool() {
                 </div>
                 <Button type="submit" className="w-full bg-black text-white hover:bg-gray-800">Calculate Influence Index</Button>
               </form>
+              <div className="mt-4">
+                <Input type="file" accept=".csv,.xlsx" />
+                <p className="text-sm text-gray-500 mt-2">Upload CSV or Excel file as an alternative</p>
+              </div>
               {influenceResult !== null && (
                 <div className="mt-6 p-4 bg-gray-100 rounded-lg border border-black">
                   <p className="text-lg font-semibold text-black">Influence Index: {influenceResult.toFixed(2)}</p>
@@ -193,10 +206,14 @@ export default function AnalysisTool() {
                 </div>
                 <Button type="submit" className="w-full bg-black text-white hover:bg-gray-800">Calculate Nash Equilibrium</Button>
               </form>
+              <div className="mt-4">
+                <Input type="file" accept=".csv,.xlsx" />
+                <p className="text-sm text-gray-500 mt-2">Upload CSV or Excel file as an alternative</p>
+              </div>
               {nashResult && (
                 <div className="mt-6 p-4 bg-gray-100 rounded-lg border border-black">
-                  <h3 className="text-lg font-semibold text-black mb-2">Nash Equilibrium Result:</h3>
-                  <pre className="bg-white p-4 rounded border border-gray-300">{nashResult}</pre>
+                  <h3 className="text-lg font-semibold text-black mb-2">Nash Equilibrium Result</h3>
+                  <p>{nashResult}</p>
                 </div>
               )}
             </TabsContent>
@@ -208,9 +225,8 @@ export default function AnalysisTool() {
                   <Input
                     id="benefit"
                     type="number"
-                    step="0.01"
                     value={benefit}
-                    onChange={(e) => setBenefit(parseFloat(e.target.value))}
+                    onChange={(e) => setBenefit(Number(e.target.value))}
                     className="border-black"
                   />
                 </div>
@@ -219,25 +235,27 @@ export default function AnalysisTool() {
                   <Input
                     id="cost"
                     type="number"
-                    step="0.01"
                     value={cost}
-                    onChange={(e) => setCost(parseFloat(e.target.value))}
+                    onChange={(e) => setCost(Number(e.target.value))}
                     className="border-black"
                   />
                 </div>
-                <Button type="submit" className="w-full bg-black text-white hover:bg-gray-800">Calculate Relationship Value</Button>
+                <Button type="submit" className="w-full bg-black text-white hover:bg-gray-800">Calculate Social Exchange</Button>
               </form>
+              <div className="mt-4">
+                <Input type="file" accept=".csv,.xlsx" />
+                <p className="text-sm text-gray-500 mt-2">Upload CSV or Excel file as an alternative</p>
+              </div>
               {relationshipValue !== null && (
                 <div className="mt-6 p-4 bg-gray-100 rounded-lg border border-black">
-                  <p className="text-lg font-semibold text-black">Relationship Value: {relationshipValue.toFixed(2)}</p>
-                  <p className="text-sm text-gray-600 mt-2">
-                    {relationshipValue > 0 ? 'Positive relationship' : relationshipValue < 0 ? 'Negative relationship' : 'Neutral relationship'}
-                  </p>
+                  <h3 className="text-lg font-semibold text-black mb-2">Relationship Value</h3>
+                  <p>{relationshipValue}</p>
                 </div>
               )}
             </TabsContent>
           </Tabs>
         </CardContent>
+        <CardFooter></CardFooter>
       </Card>
     </div>
     </Layout>
