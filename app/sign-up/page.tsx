@@ -189,18 +189,25 @@ export default function SignUp() {
       </div>
 
       {/* Right side - Image and Description */}
-      <div className="w-full md:w-1/2 bg-gray-100 p-8 flex flex-col items-center justify-center">
+      <div
+        className="w-full md:w-1/2 bg-gray-100 p-8 flex flex-col items-center justify-center"
+        style={{
+          backgroundImage: "url('https://fastly.picsum.photos/id/51/5000/3333.jpg?hmac=9dZb89mIRt-mPQpI_ScJAxVsNI82SFCGOuiKsvGSchY')",
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+        }}
+      >
         <div className="max-w-md text-center">
           <Image
-            src="/placeholder.svg?height=200&width=200"
-            alt="Sign Up"
+            src="https://fastly.picsum.photos/id/64/4326/2884.jpg?hmac=9_SzX666YRpR_fOyYStXpfSiJ_edO3ghlSRnH2w09Kg"
+            alt="Sign In"
             width={200}
             height={200}
-            className="mx-auto mb-8"
+            className="mx-auto mb-8 rounded-full"
           />
-          <h2 className="text-2xl font-bold text-gray-900 mb-4">Welcome to Our Community!</h2>
-          <p className="text-gray-600">
-            Sign up to create an account and start enjoying our services. We’re excited to have you on board!
+          <h2 className="text-2xl font-bold text-gray-200 mb-4">Welcome to Our Community!</h2>
+          <p className="text-white">
+          Sign up to create an account and start enjoying our services. We’re excited to have you on board!
           </p>
         </div>
       </div>
