@@ -1,4 +1,4 @@
-public function nash_equilib_for_three_players(CustomTable customTable, int playerCount) returns string {
+public function nash_equilib_for_three_players(CustomTable customTable, int playerCount) returns FindNash {
 
     string output = "";
     int valueIndex = 0;
@@ -77,6 +77,7 @@ public function nash_equilib_for_three_players(CustomTable customTable, int play
     }
 
     output += "\nNash Equilibria for 3 Players:\n";
+    map<anydata> nashResult = {};
     foreach int k in 0 ..< depth {
         foreach int i in 0 ..< rows {
             foreach int j in 0 ..< cols {
@@ -86,6 +87,10 @@ public function nash_equilib_for_three_players(CustomTable customTable, int play
                     output += "(" + payoffs[k][i][j][0].toString() + ", "
                                 + payoffs[k][i][j][1].toString() + ", "
                                 + payoffs[k][i][j][2].toString() + ")\n";
+                    nashResult["strategy/"+k.toString()+"/"+i.toString()+"/"+j.toString()] = 
+                            "(" + payoffs[k][i][j][0].toString() + ", "
+                                + payoffs[k][i][j][1].toString() + ", "
+                                + payoffs[k][i][j][2].toString() + ")";
                 }
             }
         }
@@ -93,7 +98,15 @@ public function nash_equilib_for_three_players(CustomTable customTable, int play
 
     output += "\nNash Equilibria matrix: ";
     output += isBestPossibleOutcome.toString();
+    map<anydata> nashPossition = {};
+    nashPossition["isBestPossibleOutcome"] = isBestPossibleOutcome;
 
-    return output;
+    FindNash gtr = {
+        message: output,
+        nashResult: nashResult,
+        nashPossition: nashPossition
+    };
+
+    return gtr;
 
 }

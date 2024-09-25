@@ -1,4 +1,5 @@
-public function nash_equilib_for_two_players(CustomTable customTable, int playerCount) returns string {
+
+public function nash_equilib_for_two_players(CustomTable customTable, int playerCount) returns FindNash {
     string output = "";
     int valueIndex = 0;
 
@@ -52,17 +53,29 @@ public function nash_equilib_for_two_players(CustomTable customTable, int player
     }
 
     output += "\nNash Equilibria for 2 Players:\n";
+    map<anydata> nashResult = {};
     foreach int i in 0 ..< rows {
         foreach int j in 0 ..< cols {
             if isBestPossibleOutcome[i][j][0] == 2 && isBestPossibleOutcome[i][j][1] == 2 {
                 output += "(" + payoffs[i][j][0].toString() + ", "
                             + payoffs[i][j][1].toString() + ")\n";
+                nashResult["strategy/"+i.toString()+"/"+j.toString()] = 
+                            "(" + payoffs[i][j][0].toString() + ", "
+                            + payoffs[i][j][1].toString() + ")";
             }
         }
     }
 
     output += "\nNash Equilibria matrix: ";
     output += isBestPossibleOutcome.toString();
+    map<anydata> nashPossition = {};
+    nashPossition["isBestPossibleOutcome"] = isBestPossibleOutcome;
 
-    return output;
+    FindNash gtr = {
+        message: output,
+        nashResult: nashResult,
+        nashPossition: nashPossition
+    };
+
+    return gtr;
 }

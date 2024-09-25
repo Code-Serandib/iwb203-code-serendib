@@ -58,10 +58,10 @@ POST http://localhost:9090/stakeholder-analytics/gt_analytics
 content-type: application/json
 
 {
-    "players_names": ["Mike", "Amy"],
-    "atr_count": [2, 2],
-    "atr": ["up", "down", "left", "right"],
-    "values": [8, 6, 2, 4, 1, 7, 3, 9]
+    "players_names": ["Mike", "Amy", "John"],
+    "atr_count": [2, 2, 2],
+    "atr": ["up", "down", "left", "right", "front", "back"],
+    "values": [8, 6, 2, 4, 1, 7, 3, 9, 5, 6, 2, 3, 5, 8, 0, 4, 7, 9, 9, 4, 6, 2, 1, 5]
 }
 
 ### for three players
