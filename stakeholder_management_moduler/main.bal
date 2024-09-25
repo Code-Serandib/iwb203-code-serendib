@@ -212,7 +212,7 @@ service /stakeholder\-analytics on new http:Listener(9090) {
 
         float[][] SIM = stakeholder_equilibrium:buildStakeholderInfluenceMatrix(stakeholders);
 
-        json response = { "SIM": SIM };
+        json response = { "Stakeholder Influence Matrix (SIM)": SIM };
         check caller->respond(response);
     }
 
@@ -225,7 +225,7 @@ service /stakeholder\-analytics on new http:Listener(9090) {
         float[] DSI = stakeholder_equilibrium:calculateDynamicStakeholderImpact(stakeholders, deltaBehavior);
 
         json response = {
-            "DSI": DSI
+            "Dynamic Stakeholder Impact (DSI)": DSI
         };
 
         check caller->respond(response);
@@ -240,7 +240,7 @@ service /stakeholder\-analytics on new http:Listener(9090) {
         float SNS = stakeholder_equilibrium:calculateStakeholderNetworkStability(stakeholders, deltaBehavior);
 
         json response = {
-            "SNS": SNS
+            "Stakeholder Network Stability (SNS)": SNS
         };
 
         check caller->respond(response);
@@ -260,7 +260,7 @@ service /stakeholder\-analytics on new http:Listener(9090) {
         float[] SIS = stakeholder_equilibrium:calculateSystemicInfluenceScore(stakeholders);
 
         json response = {
-            "SIS": SIS
+            "Systemic Influence Score (SIS)": SIS
         };
 
         check caller->respond(response);//end
