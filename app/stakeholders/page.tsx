@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Select } from "@/components/ui/select";
+import Layout from '@/components/layout/Layout'
 
 export default function StakeholderRegistration() {
   const router = useRouter();
@@ -41,6 +42,7 @@ export default function StakeholderRegistration() {
   };
 
   return (
+    <Layout>
     <div className="container mx-auto flex w-full flex-col justify-center space-y-6 sm:w-[550px] my-10">
       <Card>
         <CardHeader className="space-y-1">
@@ -122,5 +124,6 @@ export default function StakeholderRegistration() {
         </CardFooter>
       </Card>
     </div>
+    </Layout>
   );
 }
