@@ -49,7 +49,7 @@ export default function AdvancedMetricsPage() {
     return (
         <Layout>
         <div className="min-h-screen bg-gradient-to-br from-gray-100 to-white p-4">
-            <Card className="w-full max-w-4xl mx-auto">
+            <Card className="w-full mx-auto">
                 <CardHeader>
                     <CardTitle className="text-3xl font-bold text-center text-black">Advanced Engagement Metrics</CardTitle>
                     <CardDescription className="text-center text-gray-600">
