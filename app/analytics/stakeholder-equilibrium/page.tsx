@@ -6,7 +6,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Button } from "@/components/ui/button"
-import { BarChart2, GitBranch, Network, Zap } from 'lucide-react'
+import { BarChart2, GitBranch, Network, Zap, Plus, Minus } from 'lucide-react'
 import Layout from '@/components/layout/Layout'
 
 export default function StakeholderAnalytics() {
@@ -24,7 +24,7 @@ export default function StakeholderAnalytics() {
 
   const handleStakeholderChange = (index, field, value) => {
     const updatedStakeholders = [...stakeholders]
-    updatedStakeholders[index][field] = parseFloat(value)
+    updatedStakeholders[index][field] = field === 'name' ? value : parseFloat(value)
     setStakeholders(updatedStakeholders)
   }
 
@@ -32,6 +32,20 @@ export default function StakeholderAnalytics() {
     const updatedDeltaBehavior = [...deltaBehavior]
     updatedDeltaBehavior[index] = parseFloat(value)
     setDeltaBehavior(updatedDeltaBehavior)
+  }
+
+  const addStakeholder = () => {
+    setStakeholders([...stakeholders, { name: `Stakeholder ${stakeholders.length + 1}`, connectionStrength: 0, influence: 0 }])
+    setDeltaBehavior([...deltaBehavior, 0])
+  }
+
+  const removeStakeholder = (index) => {
+    if (stakeholders.length > 1) {
+      const updatedStakeholders = stakeholders.filter((_, i) => i !== index)
+      const updatedDeltaBehavior = deltaBehavior.filter((_, i) => i !== index)
+      setStakeholders(updatedStakeholders)
+      setDeltaBehavior(updatedDeltaBehavior)
+    }
   }
 
   const calculateSIM = async () => {
@@ -144,7 +158,7 @@ export default function StakeholderAnalytics() {
               <TabsContent value="sim">
                 <div className="space-y-4">
                   {stakeholders.map((stakeholder, index) => (
-                    <div key={index} className="grid grid-cols-3 gap-4">
+                    <div key={index} className="grid grid-cols-4 gap-4 items-center">
                       <Input
                         value={stakeholder.name}
                         onChange={(e) => handleStakeholderChange(index, 'name', e.target.value)}
@@ -165,13 +179,19 @@ export default function StakeholderAnalytics() {
                         placeholder="Influence"
                         className="border-black"
                       />
+                      <Button onClick={() => removeStakeholder(index)} variant="outline" className="border-black">
+                        <Minus className="w-4 h-4" />
+                      </Button>
                     </div>
                   ))}
+                  <Button onClick={addStakeholder} variant="outline" className="w-full border-black">
+                    <Plus className="w-4 h-4 mr-2" /> Add Stakeholder
+                  </Button>
                   <Button onClick={calculateSIM} className="w-full bg-black text-white hover:bg-gray-800">Calculate SIM</Button>
                 </div>
                 {simResult && (
                   <div className="mt-6 p-4 bg-gray-100 rounded-lg border border-black">
-                    <h3 className="text-lg font-semibold text-black mb-2">Stakeholder Influence Matrix:</h3>
+                    <h3 className="text-lg font-semibold text-black mb-2">Stakeholder Influence Matrix (SIM):</h3>
                     <pre className="bg-white p-4 rounded border border-gray-300 overflow-x-auto">
                       {JSON.stringify(simResult, null, 2)}
                     </pre>
@@ -182,7 +202,7 @@ export default function StakeholderAnalytics() {
               <TabsContent value="dsi">
                 <div className="space-y-4">
                   {stakeholders.map((stakeholder, index) => (
-                    <div key={index} className="grid grid-cols-4 gap-4">
+                    <div key={index} className="grid grid-cols-5 gap-4 items-center">
                       <Input
                         value={stakeholder.name}
                         onChange={(e) => handleStakeholderChange(index, 'name', e.target.value)}
@@ -210,8 +230,14 @@ export default function StakeholderAnalytics() {
                         placeholder="Delta Behavior"
                         className="border-black"
                       />
+                      <Button onClick={() => removeStakeholder(index)} variant="outline" className="border-black">
+                        <Minus className="w-4 h-4" />
+                      </Button>
                     </div>
                   ))}
+                  <Button onClick={addStakeholder} variant="outline" className="w-full border-black">
+                    <Plus className="w-4 h-4 mr-2" /> Add Stakeholder
+                  </Button>
                   <Button onClick={calculateDSI} className="w-full bg-black text-white hover:bg-gray-800">Calculate DSI</Button>
                 </div>
                 {dsiResult && (
@@ -227,7 +253,7 @@ export default function StakeholderAnalytics() {
               <TabsContent value="sis">
                 <div className="space-y-4">
                   {stakeholders.map((stakeholder, index) => (
-                    <div key={index} className="grid grid-cols-3 gap-4">
+                    <div key={index} className="grid grid-cols-4 gap-4 items-center">
                       <Input
                         value={stakeholder.name}
                         onChange={(e) => handleStakeholderChange(index, 'name', e.target.value)}
@@ -248,8 +274,14 @@ export default function StakeholderAnalytics() {
                         placeholder="Influence"
                         className="border-black"
                       />
+                      <Button onClick={() => removeStakeholder(index)} variant="outline" className="border-black">
+                        <Minus className="w-4 h-4" />
+                      </Button>
                     </div>
                   ))}
+                  <Button onClick={addStakeholder} variant="outline" className="w-full border-black">
+                    <Plus className="w-4 h-4 mr-2" /> Add Stakeholder
+                  </Button>
                   <Button onClick={calculateSIS} className="w-full bg-black text-white hover:bg-gray-800">Calculate SIS</Button>
                 </div>
                 {sisResult && (
@@ -265,7 +297,7 @@ export default function StakeholderAnalytics() {
               <TabsContent value="sns">
                 <div className="space-y-4">
                   {stakeholders.map((stakeholder, index) => (
-                    <div key={index} className="grid grid-cols-4 gap-4">
+                    <div key={index} className="grid grid-cols-5 gap-4 items-center">
                       <Input
                         value={stakeholder.name}
                         onChange={(e) => handleStakeholderChange(index, 'name', e.target.value)}
@@ -293,8 +325,14 @@ export default function StakeholderAnalytics() {
                         placeholder="Delta Behavior"
                         className="border-black"
                       />
+                      <Button onClick={() => removeStakeholder(index)} variant="outline" className="border-black">
+                        <Minus className="w-4 h-4" />
+                      </Button>
                     </div>
                   ))}
+                  <Button onClick={addStakeholder} variant="outline" className="w-full border-black">
+                    <Plus className="w-4 h-4 mr-2" /> Add Stakeholder
+                  </Button>
                   <Button onClick={calculateSNS} className="w-full bg-black text-white hover:bg-gray-800">Calculate SNS</Button>
                 </div>
                 {snsResult && (
