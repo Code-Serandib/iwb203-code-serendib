@@ -73,7 +73,7 @@ dependencies = [
 [[package]]
 org = "ballerina"
 name = "http"
-version = "2.12.0"
+version = "2.12.1"
 dependencies = [
 	{org = "ballerina", name = "auth"},
 	{org = "ballerina", name = "cache"},
@@ -109,6 +109,9 @@ version = "1.6.1"
 dependencies = [
 	{org = "ballerina", name = "jballerina.java"},
 	{org = "ballerina", name = "lang.value"}
+]
+modules = [
+	{org = "ballerina", packageName = "io", moduleName = "io"}
 ]
 
 [[package]]
@@ -153,6 +156,15 @@ dependencies = [
 org = "ballerina"
 name = "lang.decimal"
 version = "0.0.0"
+dependencies = [
+	{org = "ballerina", name = "jballerina.java"}
+]
+
+[[package]]
+org = "ballerina"
+name = "lang.error"
+version = "0.0.0"
+scope = "testOnly"
 dependencies = [
 	{org = "ballerina", name = "jballerina.java"}
 ]
@@ -215,6 +227,9 @@ dependencies = [
 	{org = "ballerina", name = "lang.value"},
 	{org = "ballerina", name = "observe"}
 ]
+modules = [
+	{org = "ballerina", packageName = "log", moduleName = "log"}
+]
 
 [[package]]
 org = "ballerina"
@@ -259,11 +274,39 @@ dependencies = [
 
 [[package]]
 org = "ballerina"
+name = "sql"
+version = "1.14.1"
+dependencies = [
+	{org = "ballerina", name = "io"},
+	{org = "ballerina", name = "jballerina.java"},
+	{org = "ballerina", name = "lang.object"},
+	{org = "ballerina", name = "time"}
+]
+modules = [
+	{org = "ballerina", packageName = "sql", moduleName = "sql"}
+]
+
+[[package]]
+org = "ballerina"
 name = "task"
 version = "2.5.0"
 dependencies = [
 	{org = "ballerina", name = "jballerina.java"},
 	{org = "ballerina", name = "time"}
+]
+
+[[package]]
+org = "ballerina"
+name = "test"
+version = "0.0.0"
+scope = "testOnly"
+dependencies = [
+	{org = "ballerina", name = "jballerina.java"},
+	{org = "ballerina", name = "lang.array"},
+	{org = "ballerina", name = "lang.error"}
+]
+modules = [
+	{org = "ballerina", packageName = "test", moduleName = "test"}
 ]
 
 [[package]]
@@ -283,6 +326,20 @@ dependencies = [
 ]
 
 [[package]]
+org = "ballerina"
+name = "uuid"
+version = "1.8.0"
+dependencies = [
+	{org = "ballerina", name = "crypto"},
+	{org = "ballerina", name = "jballerina.java"},
+	{org = "ballerina", name = "lang.int"},
+	{org = "ballerina", name = "time"}
+]
+modules = [
+	{org = "ballerina", packageName = "uuid", moduleName = "uuid"}
+]
+
+[[package]]
 org = "ballerinai"
 name = "observe"
 version = "0.0.0"
@@ -295,15 +352,50 @@ modules = [
 ]
 
 [[package]]
-org = "oshada_kavintha"
-name = "risk_modeling"
+org = "ballerinax"
+name = "java.jdbc"
+version = "1.12.1"
+dependencies = [
+	{org = "ballerina", name = "io"},
+	{org = "ballerina", name = "jballerina.java"},
+	{org = "ballerina", name = "lang.string"},
+	{org = "ballerina", name = "sql"},
+	{org = "ballerina", name = "time"}
+]
+modules = [
+	{org = "ballerinax", packageName = "java.jdbc", moduleName = "java.jdbc"}
+]
+
+[[package]]
+org = "ballerinax"
+name = "mysql.driver"
+version = "1.7.0"
+modules = [
+	{org = "ballerinax", packageName = "mysql.driver", moduleName = "mysql.driver"}
+]
+
+[[package]]
+org = "code_serandib"
+name = "stakeholder_management_api"
 version = "0.1.0"
 dependencies = [
 	{org = "ballerina", name = "data.jsondata"},
 	{org = "ballerina", name = "http"},
-	{org = "ballerinai", name = "observe"}
+	{org = "ballerina", name = "io"},
+	{org = "ballerina", name = "log"},
+	{org = "ballerina", name = "sql"},
+	{org = "ballerina", name = "test"},
+	{org = "ballerina", name = "uuid"},
+	{org = "ballerinai", name = "observe"},
+	{org = "ballerinax", name = "java.jdbc"},
+	{org = "ballerinax", name = "mysql.driver"}
 ]
 modules = [
-	{org = "oshada_kavintha", packageName = "risk_modeling", moduleName = "risk_modeling"}
+	{org = "code_serandib", packageName = "stakeholder_management_api", moduleName = "stakeholder_management_api"},
+	{org = "code_serandib", packageName = "stakeholder_management_api", moduleName = "stakeholder_management_api.api_service"},
+	{org = "code_serandib", packageName = "stakeholder_management_api", moduleName = "stakeholder_management_api.engagement_metrics"},
+	{org = "code_serandib", packageName = "stakeholder_management_api", moduleName = "stakeholder_management_api.relation_depth_analysis"},
+	{org = "code_serandib", packageName = "stakeholder_management_api", moduleName = "stakeholder_management_api.risk_modeling"},
+	{org = "code_serandib", packageName = "stakeholder_management_api", moduleName = "stakeholder_management_api.stakeholder_equilibrium"}
 ]
 
