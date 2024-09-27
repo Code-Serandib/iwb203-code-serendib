@@ -1,11 +1,121 @@
 import ballerina/http;
 import ballerina/data.jsondata;
-import stakeholder_management_moduler.engagement_metrics;
-import stakeholder_management_moduler.relation_depth_analysis;
-import stakeholder_management_moduler.risk_modeling;
-import stakeholder_management_moduler.stakeholder_equilibrium;
+import ballerina/log;
+import ballerina/sql;
+import ballerinax/java.jdbc;
+import ballerinax/mysql.driver as _;
+import stakeholder_management_api.engagement_metrics;
+import stakeholder_management_api.relation_depth_analysis;
+import stakeholder_management_api.risk_modeling;
+import stakeholder_management_api.stakeholder_equilibrium;
+import stakeholder_management_api.api_service;
+
+string jdbcUrl = string `${DB_URL}?user=${DB_USER}&password=${DB_PASSWORD}`;
+
+function initDatabase(sql:Client dbClient) returns error? {
+    _ = check dbClient->execute(`CREATE TABLE IF NOT EXISTS user_api (id INT AUTO_INCREMENT PRIMARY KEY,
+                                    username VARCHAR(100) NOT NULL,
+                                    email VARCHAR(100) NOT NULL,
+                                    api_key VARCHAR(255) UNIQUE NOT NULL,
+                                    project_name VARCHAR(100),
+                                    key_name VARCHAR(100) UNIQUE,
+                                    created_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                                    last_used TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP)`);
+}
 
 service /stakeholder\-analytics on new http:Listener(9090) {
+    final sql:Client dbClient;
+
+    function init() returns error? {
+        self.dbClient = check new jdbc:Client(jdbcUrl);
+        check initDatabase(self.dbClient);
+    }
+
+    // Function to check if the provided API key is valid
+    function isValidApiKey(string apiKey) returns boolean {
+        stream<record {}, sql:Error?> resultStream = self.dbClient->query(`SELECT api_key FROM user_api WHERE api_key = ${apiKey}`);
+        do {
+            record {}? existingUser = check resultStream.next();
+
+            if existingUser is record {} {
+                return true;
+            }
+        } on fail var e {
+            log:printError("Checking user exist fail: " + e.toBalString());
+        }
+        return false;
+    }
+
+    resource function post register(http:Caller caller, http:Request req) returns error? {
+        json payload = check req.getJsonPayload();
+        string username = (check payload.username).toString();
+        string email = (check payload.email).toString();
+        string projectName = (check payload.projectName).toString();
+        string keyName = (check payload.keyName).toString();
+
+        // Check if user already exists in the database
+        stream<record {}, sql:Error?> resultStream = self.dbClient->query(`SELECT key_name FROM user_api WHERE key_name = ${keyName}`);
+
+        record {}? existingKeyName = check resultStream.next();
+
+        if existingKeyName is record {} {
+            check caller->respond("Key name already exist");
+            log:printError("Duplicate key name: " + keyName);
+            return;
+        }
+
+        // Generate API key
+        string apiKey = api_service:generateApiKey();
+
+        // Insert new user into the database
+        sql:ExecutionResult _ = check self.dbClient->execute(`INSERT INTO user_api (username, email, api_key, project_name, key_name) VALUES (${username}, ${email}, ${apiKey}, ${projectName}, ${keyName})`);
+
+        // Respond with API key
+        json response = {apiKey: apiKey};
+        check caller->respond(response);
+
+        log:printInfo("New user registered: " + username);
+    }
+
+    resource function get data(http:Caller caller, http:Request req) returns error? {
+        string|error apiKey = req.getHeader("x-api-key");
+        if (apiKey is error || !self.isValidApiKey(apiKey)) {
+            // Create a response object with a 401 Unauthorized status code
+            log:printError("Check authorize fail: "+check apiKey);
+            http:Response unauthorizedResponse = new;
+            unauthorizedResponse.statusCode = http:STATUS_UNAUTHORIZED;
+            unauthorizedResponse.setPayload("Unauthorized");
+            check caller->respond(unauthorizedResponse);
+            return;
+        }
+
+        json data = {message: "This is protected data!"};
+        check caller->respond(data);
+    }
+
+    resource function put rotateKey(http:Caller caller, http:Request req) returns error? {
+        string|error apiKey = req.getHeader("x-api-key");
+        if (apiKey is error || !self.isValidApiKey(apiKey)) {
+            http:Response unauthorizedResponse = new;
+            unauthorizedResponse.statusCode = http:STATUS_UNAUTHORIZED;
+            unauthorizedResponse.setPayload("Unauthorized");
+            check caller->respond(unauthorizedResponse);
+            return;
+        }
+
+        // Generate a new API key
+        string newApiKey = api_service:generateApiKey();
+
+        // Update the API key in the database
+        sql:ExecutionResult _ = check self.dbClient->execute(`UPDATE user_api SET api_key = ${newApiKey} WHERE api_key = ${apiKey}`);
+
+        // Respond with the new API key
+        json response = {apiKey: newApiKey};
+        check caller->respond(response);
+    }
+
+    
+
     //engagement-metrics functions start
     //*****************************************//
 
