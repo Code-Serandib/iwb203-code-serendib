@@ -1,9 +1,9 @@
 import ballerina/http;
 import ballerina/data.jsondata;
-import ballerina/io;
 import stakeholder_management_moduler.engagement_metrics;
 import stakeholder_management_moduler.relation_depth_analysis;
 import stakeholder_management_moduler.risk_modeling;
+import stakeholder_management_moduler.stakeholder_equilibrium;
 
 service /stakeholder\-analytics on new http:Listener(9090) {
     //engagement-metrics functions start
@@ -56,7 +56,7 @@ service /stakeholder\-analytics on new http:Listener(9090) {
 
     //relation-depth-analysis functions start
     //*****************************************//
-    resource function post analytics(relation_depth_analysis:SEmetrics se_metrics) returns http:Created|error {
+    resource function post analytics(http:Caller caller, relation_depth_analysis:SEmetrics se_metrics) returns error? {
 
         relation_depth_analysis:stakeholderType? stakeholderEnumType = null;
         if (se_metrics.stakeholder_type is string) {
@@ -88,23 +88,15 @@ service /stakeholder\-analytics on new http:Listener(9090) {
             }
         }
 
-        float|error result = relation_depth_analysis:stakeholder_influence_index(se_metrics.power, se_metrics.legitimacy, se_metrics.urgency, stakeholderEnumType);
-        if (result is float) {
-            io:println(result);
-            return http:CREATED;
-        } else {
-            return result;
-        }
+        relation_depth_analysis:InfluenceIndexResult|error result = 
+        relation_depth_analysis:stakeholder_influence_index(se_metrics.power, se_metrics.legitimacy, se_metrics.urgency, stakeholderEnumType);
+        
+        check caller->respond(result);
     }
 
-    resource function post gt_analytics(relation_depth_analysis:CustomTable customTable) returns http:Created|error {
-        string|error result = relation_depth_analysis:game_theory_cal(customTable);
-        if (result is string) {
-            io:println(result);
-            return http:CREATED;
-        } else {
-            return result;
-        }
+    resource function post gt_analytics(http:Caller caller, relation_depth_analysis:CustomTable customTable) returns error? {
+        relation_depth_analysis:GameTheoryResult|error result = relation_depth_analysis:game_theory_cal(customTable);
+        check caller->respond(result);
     }
 
      resource function post relationshipValue(http:Caller caller, http:Request req) returns error? {
@@ -137,7 +129,7 @@ service /stakeholder\-analytics on new http:Listener(9090) {
 
     //risk-modeling functions start
     //*****************************************//
-//Risk Score
+    //Risk Score
     resource function post calculate_risk_score(http:Caller caller, risk_modeling:RiskInput riskInput) returns error? {
         // Validation
         if (riskInput.Si < 0.0 || riskInput.Si > 1.0 || riskInput.Ei < 0.0 || riskInput.Ei > 1.0) {
@@ -204,5 +196,75 @@ service /stakeholder\-analytics on new http:Listener(9090) {
         check caller->respond(response);
     }
     //risk-modeling functions end
+    //*****************************************//
+
+    //stakeholder-equilibrium functions start
+    //*****************************************//
+    // Calculate SIM
+    resource function post calculate_sim(http:Caller caller, http:Request req) returns error? {
+        json payload = check req.getJsonPayload();
+
+         // Ensure the 'stakeholders' field is present and is of type json
+        json stakeholdersJson = check payload.stakeholders;
+        
+        // Parse the 'stakeholders' field in the JSON payload
+        stakeholder_equilibrium:Stakeholder[] stakeholders = check jsondata:parseAsType(stakeholdersJson);
+
+        float[][] SIM = stakeholder_equilibrium:buildStakeholderInfluenceMatrix(stakeholders);
+
+        json response = { "Stakeholder Influence Matrix (SIM)": SIM };
+        check caller->respond(response);
+    }
+
+    // Calculate DSI
+    resource function post calculate_dsi(http:Caller caller, http:Request req) returns error? {
+        json payload = check req.getJsonPayload();
+        stakeholder_equilibrium:Stakeholder[] stakeholders = check jsondata:parseAsType(check payload.stakeholders);
+        float[] deltaBehavior = check jsondata:parseAsType(check payload.deltaBehavior);
+
+        float[] DSI = stakeholder_equilibrium:calculateDynamicStakeholderImpact(stakeholders, deltaBehavior);
+
+        json response = {
+            "Dynamic Stakeholder Impact (DSI)": DSI
+        };
+
+        check caller->respond(response);
+    }
+
+    // Calculate SNS
+    resource function post calculate_sns(http:Caller caller, http:Request req) returns error? {
+        json payload = check req.getJsonPayload();
+        stakeholder_equilibrium:Stakeholder[] stakeholders = check jsondata:parseAsType(check payload.stakeholders);
+        float[] deltaBehavior = check jsondata:parseAsType(check payload.deltaBehavior);
+
+        float SNS = stakeholder_equilibrium:calculateStakeholderNetworkStability(stakeholders, deltaBehavior);
+
+        json response = {
+            "Stakeholder Network Stability (SNS)": SNS
+        };
+
+        check caller->respond(response);
+    }
+
+    // Calculate SIS
+    resource function post calculate_sis(http:Caller caller, http:Request req) returns error? {
+        json payload = check req.getJsonPayload();
+        
+         // Ensure the 'stakeholders' field is present and is of type json
+        json stakeholdersJson = check payload.stakeholders;
+
+        
+        // Parse the 'stakeholders' field in the JSON payload
+        stakeholder_equilibrium:Stakeholder[] stakeholders = check jsondata:parseAsType(stakeholdersJson);
+
+        float[] SIS = stakeholder_equilibrium:calculateSystemicInfluenceScore(stakeholders);
+
+        json response = {
+            "Systemic Influence Score (SIS)": SIS
+        };
+
+        check caller->respond(response);//end
+    }
+    //stakeholder-equilibrium functions end
     //*****************************************//
 }

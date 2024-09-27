@@ -3,28 +3,81 @@ POST http://localhost:9090/stakeholder-modelling/calculate_sim
 content-type: application/json
 
 {
-    "stakeholders": [
-        {
-            "name": "Stakeholder A",
-            "connectionStrength": 0.8,
-            "influence": 0.6
-        },
-        {
-            "name": "Stakeholder B",
-            "connectionStrength": 0.7,
-            "influence": 0.5
-        },
-        {
-            "name": "Stakeholder C",
-            "connectionStrength": 0.6,
-            "influence": 0.4
-        }
-    ]
+    "We": 0.5,
+    "Wi": 0.3,
+    "Ws": 0.2,
+    "Ei": 0.8,
+    "Ii": 0.6,
+    "Si": 0.9
 }
 
+### post for calculate balanced score metrics
+POST http://localhost:9090/stakeholder-analytics/calculate_bsc
+content-type: application/json
 
-### Post request for calculating DSI
-POST http://localhost:9090/stakeholder-modelling/calculate_dsi
+{
+    "Wf": 0.4,
+    "Wc": 0.3,
+    "Wp": 0.2,
+    "Wl": 0.1,
+    "Fi": 0.7,
+    "Ci": 0.8,
+    "Pi": 0.6,
+    "Li": 0.9
+}
+
+### post for calculate total engament score
+POST http://localhost:9090/stakeholder-analytics/calculate_tes
+content-type: application/json
+
+{
+    "alpha": 0.6,
+    "beta": 0.4,
+    "EPSi": 0.7,
+    "BSCi": 0.8
+}
+
+#########################################
+### relation-depth-analysis test requests
+
+POST http://localhost:9090/stakeholder-analytics/analytics
+content-type: application/json
+
+{
+    "power": 5.0, 
+    "legitimacy": 6.0, 
+    "urgency": 4.0, 
+    "stakeholder_type": "EMPLOYEE"
+}
+
+### post for game theory
+POST http://localhost:9090/stakeholder-analytics/gt_analytics
+content-type: application/json
+
+{
+    "players_names": ["Mike", "Amy", "John"],
+    "atr_count": [2, 2, 2],
+    "atr": ["up", "down", "left", "right", "front", "back"],
+    "values": [8, 6, 2, 4, 1, 7, 3, 9, 5, 6, 2, 3, 5, 8, 0, 4, 7, 9, 9, 4, 6, 2, 1, 5]
+}
+
+### for three players
+# {
+#     "players_names": ["Mike", "Amy", "John"],
+#     "atr_count": [2, 2, 2],
+#     "atr": ["up", "down", "left", "right", "front", "back"],
+#     "values": [8, 6, 2, 4, 1, 7, 3, 9, 5, 6, 2, 3, 5, 8, 0, 4, 7, 9, 9, 4, 6, 2, 1, 5]
+# }
+### for two players
+# {
+#     "players_names": ["Mike", "Amy"],
+#     "atr_count": [2, 2],
+#     "atr": ["up", "down", "left", "right"],
+#     "values": [8, 6, 2, 4, 1, 7, 3, 9]
+# }
+
+### social exchange
+POST http://localhost:9090/stakeholder-analytics/relationshipValue
 content-type: application/json
 
 {
@@ -54,9 +107,10 @@ POST http://localhost:9090/stakeholder-modelling/calculate_sis
 content-type: application/json
 
 {
-    "stakeholders": [
-        {"name": "Stakeholder A", "connectionStrength": 0.8, "influence": 0.6},
-        {"name": "Stakeholder B", "connectionStrength": 0.5, "influence": 0.9},
-        {"name": "Stakeholder C", "connectionStrength": 0.7, "influence": 0.4}
-    ]
+    "riskInputs": [
+        {"Ws": 0.5, "We": 0.5, "Si": 0.7, "Ei": 0.8},
+        {"Ws": 0.6, "We": 0.4, "Si": 0.5, "Ei": 0.4},
+        {"Ws": 0.7, "We": 0.3, "Si": 0.4, "Ei": 0.2}
+    ],
+    "Te": 0.5
 }
