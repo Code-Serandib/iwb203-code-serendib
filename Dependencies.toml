@@ -392,7 +392,6 @@ dependencies = [
 ]
 modules = [
 	{org = "code_serandib", packageName = "stakeholder_management_api", moduleName = "stakeholder_management_api"},
-	{org = "code_serandib", packageName = "stakeholder_management_api", moduleName = "stakeholder_management_api.api_service"},
 	{org = "code_serandib", packageName = "stakeholder_management_api", moduleName = "stakeholder_management_api.engagement_metrics"},
 	{org = "code_serandib", packageName = "stakeholder_management_api", moduleName = "stakeholder_management_api.relation_depth_analysis"},
 	{org = "code_serandib", packageName = "stakeholder_management_api", moduleName = "stakeholder_management_api.risk_modeling"},
