@@ -16,23 +16,72 @@ export default function SignUp() {
   const [isLoading, setIsLoading] = useState(false)
   const [step, setStep] = useState(1)
 
+  const [organizationName, setOrganizationName] = useState("");
+  const [organizationType, setOrganizationType] = useState("");
+  const [industry, setIndustry] = useState("");
+  const [address, setAddress] = useState("");
+  const [country, setCountry] = useState("");
+  const [administratorName, setAdministratorName] = useState("");
+  const [email, setEmail] = useState("");
+  const [contactNumber, setContactNumber] = useState("");
+  const [role, setRole] = useState("");
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+
   const handleSignInRedirect = () => {
     router.push("/sign-in")
+  }
+
+  async function handleOAuthLogin(provider: string) {
+    window.location.href = "http://localhost:9090/auth/googleLogin";
   }
 
   const goToNextStep = () => setStep(step + 1)
   const goToPreviousStep = () => setStep(step - 1)
 
   async function onSubmit(event: React.SyntheticEvent) {
-    event.preventDefault()
-    setIsLoading(true)
+    event.preventDefault();
+    setIsLoading(true);
 
-    // TODO: Implement sign-up logic here
+    const formData = {
+      organizationName: organizationName,
+      organizationType: organizationType,
+      industry: industry,
+      address: address,
+      country: country,
+      administratorName: administratorName,
+      email: email,
+      contactNumber: contactNumber,
+      role: role,
+      username: username,
+      password: password,
+    };
 
-    setTimeout(() => {
-      setIsLoading(false)
-      router.push("/home")
-    }, 3000)
+    try {
+      const response = await fetch("http://localhost:9090/auth/signup", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
+      });
+
+      if (response.ok) {
+        // Handle successful sign-up (e.g., redirect to home)
+        setTimeout(() => {
+          setIsLoading(false);
+          router.push("/sign-in");
+        }, 3000);
+      } else {
+        // Handle errors (e.g., display error message)
+        const errorData = await response.json();
+        console.error("Sign-up error:", errorData.message);
+      }
+    } catch (error) {
+      console.error("Error during sign-up:", error);
+    } finally {
+      setIsLoading(false);
+    }
   }
 
   return (
@@ -48,11 +97,11 @@ export default function SignUp() {
             <CardContent className="grid gap-4">
               {/* Social login buttons */}
               <div className="grid grid-cols-2 gap-6">
-                <Button variant="outline">
+                <Button variant="outline" onClick={() => handleOAuthLogin('github')}>
                   <Icons.gitHub className="mr-2 h-4 w-4" />
                   GitHub
                 </Button>
-                <Button variant="outline">
+                <Button variant="outline" onClick={() => handleOAuthLogin('google')}>
                   <Icons.google className="mr-2 h-4 w-4" />
                   Google
                 </Button>
@@ -73,11 +122,11 @@ export default function SignUp() {
                 <form onSubmit={goToNextStep}>
                   <div className="grid gap-2 my-2">
                     <Label htmlFor="organization">Organization Name</Label>
-                    <Input id="organization" type="text" placeholder="Acme Inc." required />
+                    <Input id="organization" type="text" onChange={(e) => setOrganizationName(e.target.value)} placeholder="Acme Inc." required />
                   </div>
                   <div className="grid gap-2 my-2">
                     <Label htmlFor="org-type">Organization Type</Label>
-                    <Select>
+                    <Select onValueChange={(value) => setOrganizationType(value)}>
                       <SelectTrigger>
                         <SelectValue placeholder="Select organization type" />
                       </SelectTrigger>
@@ -91,15 +140,15 @@ export default function SignUp() {
                   </div>
                   <div className="grid gap-2 my-2">
                     <Label htmlFor="industry">Industry/Domain</Label>
-                    <Input id="industry" type="text" placeholder="Technology" required />
+                    <Input id="industry" onChange={(e) => setIndustry(e.target.value)} type="text" placeholder="Technology" required />
                   </div>
                   <div className="grid gap-2 my-2">
                     <Label htmlFor="address">Address</Label>
-                    <Input id="address" type="text" placeholder="123 Main St, City, State, ZIP" required />
+                    <Input id="address" type="text" onChange={(e) => setAddress(e.target.value)} placeholder="123 Main St, City, State, ZIP" required />
                   </div>
                   <div className="grid gap-2 my-2">
                     <Label htmlFor="country">Country/Region</Label>
-                    <Input id="country" type="text" placeholder="United States" required />
+                    <Input id="country" type="text" onChange={(e) => setCountry(e.target.value)} placeholder="United States" required />
                   </div>
                   <Button className="w-full mt-4" type="submit">
                     Next
@@ -112,27 +161,27 @@ export default function SignUp() {
                 <form onSubmit={onSubmit}>
                   <div className="grid gap-2 my-2">
                     <Label htmlFor="admin-name">Administrator's Full Name</Label>
-                    <Input id="admin-name" type="text" placeholder="John Doe" required />
+                    <Input id="admin-name" type="text" onChange={(e) => setAdministratorName(e.target.value)} placeholder="John Doe" required />
                   </div>
                   <div className="grid gap-2 my-2">
                     <Label htmlFor="admin-email">Administrator's Email Address</Label>
-                    <Input id="admin-email" type="email" placeholder="john@example.com" required />
+                    <Input id="admin-email" type="email" onChange={(e) => setEmail(e.target.value)} placeholder="john@example.com" required />
                   </div>
                   <div className="grid gap-2 my-2">
                     <Label htmlFor="phone">Phone Number</Label>
-                    <Input id="phone" type="tel" placeholder="+1 (555) 123-4567" required />
+                    <Input id="phone" type="tel" onChange={(e) => setContactNumber(e.target.value)} placeholder="+1 (555) 123-4567" required />
                   </div>
                   <div className="grid gap-2 my-2">
                     <Label htmlFor="role">Role in Organization</Label>
-                    <Input id="role" type="text" placeholder="CEO" required />
+                    <Input id="role" type="text" onChange={(e) => setRole(e.target.value)} placeholder="CEO" required />
                   </div>
                   <div className="grid gap-2 my-2">
                     <Label htmlFor="username">Username</Label>
-                    <Input id="username" type="text" placeholder="johndoe" required />
+                    <Input id="username" type="text" onChange={(e) => setUsername(e.target.value)} placeholder="johndoe" required />
                   </div>
                   <div className="grid gap-2 my-2">
                     <Label htmlFor="password">Password</Label>
-                    <Input id="password" type="password" required />
+                    <Input id="password" onChange={(e) => setPassword(e.target.value)} type="password" required />
                   </div>
                   <div className="flex items-center space-x-2">
                     <Checkbox id="terms" required />
