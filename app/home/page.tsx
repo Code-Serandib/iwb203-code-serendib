@@ -17,7 +17,7 @@ export default function DashboardPage() {
       router.push("/sign-in");
     } else {
       // Validate the token with the backend API
-      axios.get("http://localhost:9090/auth/validateToken", {
+      axios.get("http://localhost:9091/api/validateToken", {
         headers: { Authorization: `Bearer ${token}` }
       })
       .then(response => {
