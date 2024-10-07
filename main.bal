@@ -8,20 +8,6 @@ import stakeholder_management_api.engagement_metrics;
 import stakeholder_management_api.relation_depth_analysis;
 import stakeholder_management_api.risk_modeling;
 import stakeholder_management_api.stakeholder_equilibrium;
-import stakeholder_management_api.api_service;
-
-string jdbcUrl = string `${DB_URL}?user=${DB_USER}&password=${DB_PASSWORD}`;
-
-function initDatabase(sql:Client dbClient) returns error? {
-    _ = check dbClient->execute(`CREATE TABLE IF NOT EXISTS user_api (id INT AUTO_INCREMENT PRIMARY KEY,
-                                    username VARCHAR(100) NOT NULL,
-                                    email VARCHAR(100) NOT NULL,
-                                    api_key VARCHAR(255) UNIQUE NOT NULL,
-                                    project_name VARCHAR(100),
-                                    key_name VARCHAR(100) UNIQUE,
-                                    created_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                                    last_used TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP)`);
-}
 
 service /stakeholder\-analytics on new http:Listener(9090) {
     final sql:Client dbClient;
@@ -33,7 +19,7 @@ service /stakeholder\-analytics on new http:Listener(9090) {
 
     // Function to check if the provided API key is valid
     function isValidApiKey(string apiKey) returns boolean {
-        stream<record {}, sql:Error?> resultStream = self.dbClient->query(`SELECT api_key FROM user_api WHERE api_key = ${apiKey}`);
+        stream<record {}, sql:Error?> resultStream = self.dbClient->query(ifUserExistByAPIKey(apiKey));
         do {
             record {}? existingUser = check resultStream.next();
 
@@ -46,35 +32,24 @@ service /stakeholder\-analytics on new http:Listener(9090) {
         return false;
     }
 
-    resource function post register(http:Caller caller, http:Request req) returns error? {
-        json payload = check req.getJsonPayload();
-        string username = (check payload.username).toString();
-        string email = (check payload.email).toString();
-        string projectName = (check payload.projectName).toString();
-        string keyName = (check payload.keyName).toString();
-
+    resource function post register(http:Caller caller, APIReg apireg) returns error? {
         // Check if user already exists in the database
-        stream<record {}, sql:Error?> resultStream = self.dbClient->query(`SELECT key_name FROM user_api WHERE key_name = ${keyName}`);
-
+        stream<record {}, sql:Error?> resultStream = self.dbClient->query(ifKeyNameExist(apireg.keyName));
         record {}? existingKeyName = check resultStream.next();
 
         if existingKeyName is record {} {
             check caller->respond("Key name already exist");
-            log:printError("Duplicate key name: " + keyName);
+            log:printError("Duplicate key name: " + apireg.keyName);
             return;
         }
 
-        // Generate API key
-        string apiKey = api_service:generateApiKey();
+        string apiKey = generateApiKey();
+        sql:ExecutionResult _ = check self.dbClient->execute(insertUserApi(apireg, apiKey));
 
-        // Insert new user into the database
-        sql:ExecutionResult _ = check self.dbClient->execute(`INSERT INTO user_api (username, email, api_key, project_name, key_name) VALUES (${username}, ${email}, ${apiKey}, ${projectName}, ${keyName})`);
-
-        // Respond with API key
         json response = {apiKey: apiKey};
         check caller->respond(response);
 
-        log:printInfo("New user registered: " + username);
+        log:printInfo("New user registered: " + apireg.username);
     }
 
     resource function get data(http:Caller caller, http:Request req) returns error? {
@@ -103,13 +78,9 @@ service /stakeholder\-analytics on new http:Listener(9090) {
             return;
         }
 
-        // Generate a new API key
-        string newApiKey = api_service:generateApiKey();
+        string newApiKey = generateApiKey();
+        sql:ExecutionResult _ = check self.dbClient->execute(updateAPIKey(apiKey, newApiKey));
 
-        // Update the API key in the database
-        sql:ExecutionResult _ = check self.dbClient->execute(`UPDATE user_api SET api_key = ${newApiKey} WHERE api_key = ${apiKey}`);
-
-        // Respond with the new API key
         json response = {apiKey: newApiKey};
         check caller->respond(response);
     }
@@ -170,7 +141,7 @@ service /stakeholder\-analytics on new http:Listener(9090) {
 
         relation_depth_analysis:stakeholderType? stakeholderEnumType = null;
         if (se_metrics.stakeholder_type is string) {
-            match se_metrics.stakeholder_type {
+            match se_metrics.stakeholder_type.toString().toUpperAscii() {
                 "EMPLOYEE" => {
                     stakeholderEnumType = relation_depth_analysis:EMPLOYEE;
                 }
@@ -192,8 +163,11 @@ service /stakeholder\-analytics on new http:Listener(9090) {
                 "GOVERMENT_AGENT" => {
                     stakeholderEnumType = relation_depth_analysis:GOVERMENT_AGENT;
                 }
+                "" => {
+                    stakeholderEnumType = relation_depth_analysis:GOVERMENT_AGENT;
+                }
                 _ => {
-                    return error relation_depth_analysis:InvalidTypeException("Invalid stakeholder type");
+                    // return error relation_depth_analysis:InvalidTypeException("Invalid stakeholder type");
                 }
             }
         }

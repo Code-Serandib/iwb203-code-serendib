@@ -1,3 +1,4 @@
+
 public function nash_equilib_for_three_players(CustomTable customTable, int playerCount) returns FindNash {
 
     string output = "";
@@ -8,6 +9,7 @@ public function nash_equilib_for_three_players(CustomTable customTable, int play
     int depth = customTable.atr_count[2];
 
     int[][][][] payoffs = [];
+    int[][] indicesPossition = [];
     int[][][][] isBestPossibleOutcome = [[[[0, 0, 0], [0, 0, 0]], [[0, 0, 0], [0, 0, 0]]], [[[0, 0, 0], [0, 0, 0]], [[0, 0, 0], [0, 0, 0]]]];
 
     output += "\nPayoff Matrices for " + customTable.players_names[0] + ", "
@@ -84,6 +86,8 @@ public function nash_equilib_for_three_players(CustomTable customTable, int play
                 if (isBestPossibleOutcome[k][i][j][0] == 2 &&
                         isBestPossibleOutcome[k][i][j][1] == 2 &&
                         isBestPossibleOutcome[k][i][j][2] == 2) {
+                            int[] ip = [k,i,j];
+                            indicesPossition.push(ip);
                     output += "(" + payoffs[k][i][j][0].toString() + ", "
                                 + payoffs[k][i][j][1].toString() + ", "
                                 + payoffs[k][i][j][2].toString() + ")\n";
@@ -100,11 +104,15 @@ public function nash_equilib_for_three_players(CustomTable customTable, int play
     output += isBestPossibleOutcome.toString();
     map<anydata> nashPossition = {};
     nashPossition["isBestPossibleOutcome"] = isBestPossibleOutcome;
+    map<anydata> payoffMatrix = {};
+    payoffMatrix["payoffMatrix"] = payoffs;
 
     FindNash gtr = {
         message: output,
         nashResult: nashResult,
-        nashPossition: nashPossition
+        nashPossition: nashPossition,
+        payoffMatrix: payoffMatrix,
+        indices: indicesPossition
     };
 
     return gtr;
