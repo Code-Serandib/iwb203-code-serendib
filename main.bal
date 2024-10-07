@@ -141,7 +141,7 @@ service /stakeholder\-analytics on new http:Listener(9090) {
 
         relation_depth_analysis:stakeholderType? stakeholderEnumType = null;
         if (se_metrics.stakeholder_type is string) {
-            match se_metrics.stakeholder_type {
+            match se_metrics.stakeholder_type.toString().toUpperAscii() {
                 "EMPLOYEE" => {
                     stakeholderEnumType = relation_depth_analysis:EMPLOYEE;
                 }
@@ -163,8 +163,11 @@ service /stakeholder\-analytics on new http:Listener(9090) {
                 "GOVERMENT_AGENT" => {
                     stakeholderEnumType = relation_depth_analysis:GOVERMENT_AGENT;
                 }
+                "" => {
+                    stakeholderEnumType = relation_depth_analysis:GOVERMENT_AGENT;
+                }
                 _ => {
-                    return error relation_depth_analysis:InvalidTypeException("Invalid stakeholder type");
+                    // return error relation_depth_analysis:InvalidTypeException("Invalid stakeholder type");
                 }
             }
         }

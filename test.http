@@ -47,7 +47,7 @@ content-type: application/json
     "power": 5.0, 
     "legitimacy": 6.0, 
     "urgency": 4.0, 
-    "stakeholder_type": "EMPLOYEE"
+    "stakeholder_type": ""
 }
 
 ### post for game theory
