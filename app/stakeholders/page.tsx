@@ -29,7 +29,7 @@ export default function StakeholderRegistration() {
     const [userEmail, setUserEmail] = useState<string>("");
 
   const handleHomeRedirect = () => {
-    // router.push("/home");
+    router.push("/stakeholder/view");
     // alert("abc");
     // alert(userEmail);
   };
@@ -160,8 +160,8 @@ export default function StakeholderRegistration() {
           </CardContent>
           <CardFooter>
             <p className="px-8 text-center text-sm text-muted-foreground">
-              <a href="/help" className="underline underline-offset-4 hover:text-primary">
-                Need help with registration?
+              <a href="/stakeholders/view" className="underline underline-offset-4 hover:text-primary">
+                View Stakeholders
               </a>
             </p>
           </CardFooter>
