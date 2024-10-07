@@ -27,7 +27,7 @@ export default function SignIn() {
   // }
 
   async function handleOAuthLogin(provider: string) {
-    window.location.href = `http://localhost:9090/auth/${provider}Login`;
+    window.location.href = `http://localhost:9091/api/${provider}Login`;
       // try {
       //   setIsLoading(true);
       //   const response = await baseRoute.get(`/auth/googleLogin`, {
@@ -56,7 +56,7 @@ export default function SignIn() {
 
     try {
       // Use Axios to send the request
-      const response = await baseRoute.post("/auth/signIn", { email, password });
+      const response = await baseRoute.post("/api/signIn", { email, password });
       const token = localStorage.getItem("token");
       const headers = { Authorization: `Bearer ${token}` };
       // const response = await axios.get("http://localhost:9090/auth/protected-route", { headers });

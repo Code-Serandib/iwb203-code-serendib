@@ -50,7 +50,7 @@ export default function AdvancedMetricsPage() {
                                 <BSCForm/>
                             </TabsContent>
                             <TabsContent value="tes">
-                                <TESForm onCalculate={setTES}/>
+                                <TESForm/>
                             </TabsContent>
                         </Tabs>
                     </CardContent>
