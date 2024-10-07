@@ -8,6 +8,8 @@ import { Label } from "@/components/ui/label"
 import { Button } from "@/components/ui/button"
 import { BarChart2, GitBranch, Network, Zap, Plus, Minus } from 'lucide-react'
 import Layout from '@/components/layout/Layout'
+import axios from 'axios';
+
 
 export default function StakeholderAnalytics() {
   const [activeTab, setActiveTab] = useState('sim')
@@ -48,65 +50,62 @@ export default function StakeholderAnalytics() {
     }
   }
 
-  const calculateSIM = async () => {
-    try {
-      const response = await fetch('http://localhost:9090/stakeholder-analytics/calculate_sim', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ stakeholders })
-      })
-      const data = await response.json()
-      setSimResult(data["Stakeholder Influence Matrix (SIM)"])
-    } catch (error) {
-      console.error("Error calculating SIM:", error)
-      setSimResult("Error calculating SIM. Please try again.")
-    }
-  }
 
-  const calculateDSI = async () => {
-    try {
-      const response = await fetch('http://localhost:9090/stakeholder-analytics/calculate_dsi', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ stakeholders, deltaBehavior })
-      })
-      const data = await response.json()
-      setDsiResult(data["Dynamic Stakeholder Impact (DSI)"])
-    } catch (error) {
-      console.error("Error calculating DSI:", error)
-      setDsiResult("Error calculating DSI. Please try again.")
-    }
-  }
+const calculateSIM = async () => {
+  try {
+    const response = await axios.post('http://localhost:9091/api/calculate_sim', {
+      stakeholders
+    }, {
+      headers: { 'Content-Type': 'application/json' }
+    });
 
-  const calculateSIS = async () => {
-    try {
-      const response = await fetch('http://localhost:9090/stakeholder-analytics/calculate_sis', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ stakeholders })
-      })
-      const data = await response.json()
-      setSisResult(data["Systemic Influence Score (SIS)"])
-    } catch (error) {
-      console.error("Error calculating SIS:", error)
-      setSisResult("Error calculating SIS. Please try again.")
-    }
+    setSimResult(response.data["Stakeholder Influence Matrix (SIM)"]);
+  } catch (error) {
+    console.error("Error calculating SIM:", error);
+    setSimResult("Error calculating SIM. Please try again.");
   }
+}
 
-  const calculateSNS = async () => {
-    try {
-      const response = await fetch('http://localhost:9090/stakeholder-analytics/calculate_sns', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ stakeholders, deltaBehavior })
-      })
-      const data = await response.json()
-      setSnsResult(data["Stakeholder Network Stability (SNS)"])
-    } catch (error) {
-      console.error("Error calculating SNS:", error)
-      setSnsResult("Error calculating SNS. Please try again.")
-    }
+
+const calculateDSI = async () => {
+  try {
+    const response = await axios.post('http://localhost:9091/api/calculate_dsi', {
+      stakeholders,
+      deltaBehavior
+    });
+    setDsiResult(response.data["Dynamic Stakeholder Impact (DSI)"]);
+  } catch (error) {
+    console.error("Error calculating DSI:", error);
+    setDsiResult("Error calculating DSI. Please try again.");
   }
+};
+
+
+const calculateSIS = async () => {
+  try {
+    const response = await axios.post('http://localhost:9091/api/calculate_sis', {
+      stakeholders
+    });
+    setSisResult(response.data["Systemic Influence Score (SIS)"]);
+  } catch (error) {
+    console.error("Error calculating SIS:", error);
+    setSisResult("Error calculating SIS. Please try again.");
+  }
+};
+
+const calculateSNS = async () => {
+  try {
+    const response = await axios.post('http://localhost:9091/api/calculate_sns', {
+      stakeholders,
+      deltaBehavior
+    });
+    setSnsResult(response.data["Stakeholder Network Stability (SNS)"]);
+  } catch (error) {
+    console.error("Error calculating SNS:", error);
+    setSnsResult("Error calculating SNS. Please try again.");
+  }
+};
+
 
   return (
     <Layout>
