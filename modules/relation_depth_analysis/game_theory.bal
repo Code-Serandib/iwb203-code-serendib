@@ -1,4 +1,3 @@
-// import ballerina/io;
 
 public type CustomTable record {
     string[] players_names;
@@ -15,6 +14,15 @@ public type FindNash record {
     string message;
     map<anydata> nashResult;
     map<anydata> nashPossition;
+    map<anydata> payoffMatrix;
+    int[][] indices;
+};
+
+public type MatrixResult record {
+    string[] players;
+    string[][] options;
+    map<anydata> payoffs;
+    int[][] nashEquilibrium;
 };
 
 public function game_theory_cal(CustomTable customTable) returns error|GameTheoryResult {
@@ -31,9 +39,18 @@ public function game_theory_cal(CustomTable customTable) returns error|GameTheor
     string output = "";
     map<anydata> playerStrategies = {};
     output += "Players and their strategies:\n";
+    string[][] strat = [];
+    int x_possition = 0;
     foreach int i in 0 ..< playerCount {
         output += customTable.players_names[i] + ": Options count = " + customTable.atr_count[i].toString() + "\n";
         playerStrategies[customTable.players_names[i]] = customTable.atr_count[i];
+        string[] str = [];
+        foreach int j in 0 ..< customTable.atr_count[i] {
+            str.push(customTable.atr[x_possition]);
+            x_possition += 1;
+        }
+        strat.push(str);
+        // x_possition += customTable.atr_count[i];
     }
 
     FindNash findNash;
@@ -42,12 +59,26 @@ public function game_theory_cal(CustomTable customTable) returns error|GameTheor
         findNash = nash_equilib_for_two_players(customTable, playerCount);
         nashResult["nashResult"] = findNash.nashResult;
         nashResult["nashPossition"] = findNash.nashPossition;
+        MatrixResult matrix = {
+            players: customTable.players_names,
+            options: strat,
+            payoffs: findNash.payoffMatrix,
+            nashEquilibrium: findNash.indices
+        };
+        nashResult["matrix"] = matrix;
         output += findNash.message;
     }
     else if playerCount == 3 {
         findNash = nash_equilib_for_three_players(customTable, playerCount);
         nashResult["nashResult"] = findNash.nashResult;
         nashResult["nashPossition"] = findNash.nashPossition;
+        MatrixResult matrix = {
+            players: customTable.players_names,
+            options: strat,
+            payoffs: findNash.payoffMatrix,
+            nashEquilibrium: findNash.indices
+        };
+        nashResult["matrix"] = matrix;
         output += findNash.message;
     }
 

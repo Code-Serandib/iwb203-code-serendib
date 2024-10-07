@@ -7,6 +7,7 @@ public function nash_equilib_for_two_players(CustomTable customTable, int player
     int cols = customTable.atr_count[1];
 
     int[][][] payoffs = [];
+    int[][] indicesPossition = [];
     int[][][] isBestPossibleOutcome = [[[0, 0], [0, 0]], [[0, 0], [0, 0]]];
 
     output += "\nPayoff Matrix for " + customTable.players_names[0] + " and " + customTable.players_names[1] + ":\n";
@@ -57,6 +58,8 @@ public function nash_equilib_for_two_players(CustomTable customTable, int player
     foreach int i in 0 ..< rows {
         foreach int j in 0 ..< cols {
             if isBestPossibleOutcome[i][j][0] == 2 && isBestPossibleOutcome[i][j][1] == 2 {
+                int[] ip = [i,j];
+                indicesPossition.push(ip);
                 output += "(" + payoffs[i][j][0].toString() + ", "
                             + payoffs[i][j][1].toString() + ")\n";
                 nashResult["strategy/"+i.toString()+"/"+j.toString()] = 
@@ -70,11 +73,15 @@ public function nash_equilib_for_two_players(CustomTable customTable, int player
     output += isBestPossibleOutcome.toString();
     map<anydata> nashPossition = {};
     nashPossition["isBestPossibleOutcome"] = isBestPossibleOutcome;
+    map<anydata> payoffMatrix = {};
+    payoffMatrix["payoffMatrix"] = payoffs;
 
     FindNash gtr = {
         message: output,
         nashResult: nashResult,
-        nashPossition: nashPossition
+        nashPossition: nashPossition,
+        payoffMatrix: payoffMatrix,
+        indices: indicesPossition
     };
 
     return gtr;
