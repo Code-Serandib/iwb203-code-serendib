@@ -3,7 +3,7 @@ import { Bell, ChevronDown, Menu, Search, User, Settings, LogOut } from 'lucide-
 import { useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 
 interface NavbarProps {
   toggleSidebar: () => void;
@@ -12,6 +12,7 @@ interface NavbarProps {
 export default function Navbar({ toggleSidebar }: NavbarProps) {
   const [isProfileDropdownOpen, setIsProfileDropdownOpen] = useState(false);
   const pathname = usePathname();
+  const router = useRouter();
 
   // Function to return the page name based on the current route
   const getPageTitle = () => {
@@ -78,8 +79,13 @@ export default function Navbar({ toggleSidebar }: NavbarProps) {
                 Settings
               </a>
               <a
-                href="/logout"
+                href="#"
                 className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center"
+                onClick={() => {
+                  localStorage.removeItem("token");
+                  localStorage.removeItem("email");
+                  router.push("/sign-in");
+                }}
               >
                 <LogOut className="w-5 h-5 mr-2" />
                 Logout
