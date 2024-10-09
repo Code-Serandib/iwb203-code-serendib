@@ -138,7 +138,7 @@ function NashMatrixDisplay({ matrix }: NashMatrixProps) {
   return (
     <Card className="w-full">
       <CardHeader>
-        <CardTitle>Nash Equilibrium Result</CardTitle>
+        {/* <CardTitle>Nash Equilibrium Result</CardTitle> */}
       </CardHeader>
       <CardContent>
         <Table>
