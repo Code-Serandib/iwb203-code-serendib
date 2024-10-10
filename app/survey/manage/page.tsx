@@ -10,7 +10,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import { Plus, Edit, Trash, Eye } from 'lucide-react'
+import { Plus, Edit, Trash, Eye, Search } from 'lucide-react'
 
 // Mock data (replace with actual API calls in a real application)
 const initialSurveys = [
@@ -19,18 +19,11 @@ const initialSurveys = [
 ]
 
 const initialQuestions = [
-  { id: 1, surveyId: 1, questionText: "How satisfied are you with our service?", questionType: "rating" },
+  { id: 1, surveyId: 1, questionText: "How satisfied are you with our service?", questionType: "rating", choices: ["1", "2", "3", "4", "5"] },
   { id: 2, surveyId: 1, questionText: "What can we do to improve?", questionType: "text" },
-  { id: 3, surveyId: 2, questionText: "How likely are you to recommend our product?", questionType: "rating" },
-  { id: 4, surveyId: 2, questionText: "Which features did you like the most?", questionType: "multiple_choice" },
+  { id: 3, surveyId: 2, questionText: "How likely are you to recommend our product?", questionType: "rating", choices: ["1", "2", "3", "4", "5"] },
+  { id: 4, surveyId: 2, questionText: "Which features did you like the most?", questionType: "multiple_choice", choices: ["Ease of use", "Design", "Performance", "Customer support"] },
   { id: 5, surveyId: 2, questionText: "Any additional comments?", questionType: "text" },
-]
-
-const initialChoices = [
-  { id: 1, questionId: 4, choiceText: "Ease of use" },
-  { id: 2, questionId: 4, choiceText: "Design" },
-  { id: 3, questionId: 4, choiceText: "Performance" },
-  { id: 4, questionId: 4, choiceText: "Customer support" },
 ]
 
 const initialResponses = [
@@ -56,19 +49,18 @@ const initialStakeholders = [
 export default function EnhancedSurveyManagement() {
   const [surveys, setSurveys] = useState(initialSurveys)
   const [questions, setQuestions] = useState(initialQuestions)
-  const [choices, setChoices] = useState(initialChoices)
   const [responses, setResponses] = useState(initialResponses)
   const [submissions, setSubmissions] = useState(initialSubmissions)
   const [stakeholders, setStakeholders] = useState(initialStakeholders)
   const [editingSurvey, setEditingSurvey] = useState(null)
   const [editingQuestion, setEditingQuestion] = useState(null)
   const [newSurvey, setNewSurvey] = useState({ title: '', description: '' })
-  const [newQuestion, setNewQuestion] = useState({ surveyId: null, questionText: '', questionType: '' })
-  const [newChoice, setNewChoice] = useState({ questionId: null, choiceText: '' })
+  const [newQuestion, setNewQuestion] = useState({ surveyId: null, questionText: '', questionType: '', choices: [] })
   const [showSurveyDialog, setShowSurveyDialog] = useState(false)
   const [showQuestionDialog, setShowQuestionDialog] = useState(false)
-  const [showChoiceDialog, setShowChoiceDialog] = useState(false)
   const [selectedSurvey, setSelectedSurvey] = useState(null)
+  const [stakeholderSearch, setStakeholderSearch] = useState('')
+  const [surveySearch, setSurveySearch] = useState('')
 
   const handleCreateSurvey = () => {
     const survey = { id: Date.now(), ...newSurvey }
@@ -92,7 +84,7 @@ export default function EnhancedSurveyManagement() {
   const handleCreateQuestion = () => {
     const question = { id: Date.now(), ...newQuestion }
     setQuestions([...questions, question])
-    setNewQuestion({ surveyId: null, questionText: '', questionType: '' })
+    setNewQuestion({ surveyId: null, questionText: '', questionType: '', choices: [] })
     setShowQuestionDialog(false)
   }
 
@@ -103,20 +95,26 @@ export default function EnhancedSurveyManagement() {
 
   const handleDeleteQuestion = (id) => {
     setQuestions(questions.filter(q => q.id !== id))
-    setChoices(choices.filter(c => c.questionId !== id))
     setResponses(responses.filter(r => r.questionId !== id))
   }
 
-  const handleCreateChoice = () => {
-    const choice = { id: Date.now(), ...newChoice }
-    setChoices([...choices, choice])
-    setNewChoice({ questionId: null, choiceText: '' })
-    setShowChoiceDialog(false)
-  }
+  const filteredResponses = responses.filter(response => {
+    const stakeholder = stakeholders.find(s => s.id === response.stakeholderId)
+    const survey = surveys.find(s => s.id === response.surveyId)
+    return (
+      stakeholder.stakeholderName.toLowerCase().includes(stakeholderSearch.toLowerCase()) &&
+      survey.title.toLowerCase().includes(surveySearch.toLowerCase())
+    )
+  })
 
-  const handleDeleteChoice = (id) => {
-    setChoices(choices.filter(c => c.id !== id))
-  }
+  const filteredSubmissions = submissions.filter(submission => {
+    const stakeholder = stakeholders.find(s => s.id === submission.stakeholderId)
+    const survey = surveys.find(s => s.id === submission.surveyId)
+    return (
+      stakeholder.stakeholderName.toLowerCase().includes(stakeholderSearch.toLowerCase()) &&
+      survey.title.toLowerCase().includes(surveySearch.toLowerCase())
+    )
+  })
 
   return (
     <div className="container mx-auto p-4">
@@ -282,7 +280,7 @@ export default function EnhancedSurveyManagement() {
                   </DialogDescription>
                 </DialogHeader>
                 <div className="grid gap-4 py-4">
-                  <div className="grid grid-cols-4 items-center gap-4">
+                  <div  className="grid grid-cols-4 items-center gap-4">
                     <Label htmlFor="survey" className="text-right">
                       Survey
                     </Label>
@@ -312,7 +310,7 @@ export default function EnhancedSurveyManagement() {
                     <Label htmlFor="question-type" className="text-right">
                       Type
                     </Label>
-                    <Select onValueChange={(value) => setNewQuestion({ ...newQuestion, questionType: value })}>
+                    <Select onValueChange={(value) => setNewQuestion({ ...newQuestion, questionType: value, choices: [] })}>
                       <SelectTrigger className="col-span-3">
                         <SelectValue placeholder="Select question type" />
                       </SelectTrigger>
@@ -324,6 +322,62 @@ export default function EnhancedSurveyManagement() {
                       </SelectContent>
                     </Select>
                   </div>
+                  {(newQuestion.questionType === 'multiple_choice' || newQuestion.questionType === 'checkbox') && (
+                    <div className="grid grid-cols-4 items-center gap-4">
+                      <Label htmlFor="choices" className="text-right">
+                        Choices
+                      </Label>
+                      <div className="col-span-3">
+                        {newQuestion.choices.map((choice, index) => (
+                          <div key={index} className="flex items-center mb-2">
+                            <Input
+                              value={choice}
+                              onChange={(e) => {
+                                const newChoices = [...newQuestion.choices]
+                                newChoices[index] = e.target.value
+                                setNewQuestion({ ...newQuestion, choices: newChoices })
+                              }}
+                              className="mr-2"
+                            />
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() => {
+                                const newChoices = newQuestion.choices.filter((_, i) => i !== index)
+                                setNewQuestion({ ...newQuestion, choices: newChoices })
+                              }}
+                            >
+                              <Trash className="h-4 w-4" />
+                            </Button>
+                          </div>
+                        ))}
+                        <Button
+                          variant="outline"
+                          onClick={() => setNewQuestion({ ...newQuestion, choices: [...newQuestion.choices, ''] })}
+                        >
+                          Add Choice
+                        </Button>
+                      </div>
+                    </div>
+                  )}
+                  {newQuestion.questionType === 'rating' && (
+                    <div className="grid grid-cols-4 items-center gap-4">
+                      <Label htmlFor="rating-scale" className="text-right">
+                        Rating Scale
+                      </Label>
+                      <div className="col-span-3 flex items-center">
+                        <Input
+                          type="number"
+                          min="1"
+                          max="10"
+                          value={newQuestion.choices[1] || '5'}
+                          onChange={(e) => setNewQuestion({ ...newQuestion, choices: ['1', e.target.value] })}
+                          className="w-20 mr-2"
+                        />
+                        <span>points</span>
+                      </div>
+                    </div>
+                  )}
                 </div>
                 <DialogFooter>
                   <Button type="submit" onClick={handleCreateQuestion}>Save Question</Button>
@@ -338,6 +392,7 @@ export default function EnhancedSurveyManagement() {
                 <TableHead>Survey</TableHead>
                 <TableHead>Question</TableHead>
                 <TableHead>Type</TableHead>
+                <TableHead>Choices</TableHead>
                 <TableHead>Actions</TableHead>
               </TableRow>
             </TableHeader>
@@ -347,6 +402,7 @@ export default function EnhancedSurveyManagement() {
                   <TableCell>{surveys.find(s => s.id === question.surveyId)?.title}</TableCell>
                   <TableCell>{question.questionText}</TableCell>
                   <TableCell>{question.questionType}</TableCell>
+                  <TableCell>{question.choices ? question.choices.join(', ') : 'N/A'}</TableCell>
                   <TableCell>
                     <Button variant="outline" className="mr-2" onClick={() => setEditingQuestion(question)}>
                       <Edit className="h-4 w-4" />
@@ -386,7 +442,7 @@ export default function EnhancedSurveyManagement() {
                       Type
                     </Label>
                     <Select 
-                      onValueChange={(value) => setEditingQuestion({ ...editingQuestion, questionType: value })}
+                      onValueChange={(value) => setEditingQuestion({ ...editingQuestion, questionType: value, choices: [] })}
                       defaultValue={editingQuestion.questionType}
                     >
                       <SelectTrigger className="col-span-3">
@@ -400,6 +456,62 @@ export default function EnhancedSurveyManagement() {
                       </SelectContent>
                     </Select>
                   </div>
+                  {(editingQuestion.questionType === 'multiple_choice' || editingQuestion.questionType === 'checkbox') && (
+                    <div className="grid grid-cols-4 items-center gap-4">
+                      <Label htmlFor="edit-choices" className="text-right">
+                        Choices
+                      </Label>
+                      <div className="col-span-3">
+                        {editingQuestion.choices.map((choice, index) => (
+                          <div key={index} className="flex items-center mb-2">
+                            <Input
+                              value={choice}
+                              onChange={(e) => {
+                                const newChoices = [...editingQuestion.choices]
+                                newChoices[index] = e.target.value
+                                setEditingQuestion({ ...editingQuestion, choices: newChoices })
+                              }}
+                              className="mr-2"
+                            />
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() => {
+                                const newChoices = editingQuestion.choices.filter((_, i) => i !== index)
+                                setEditingQuestion({ ...editingQuestion, choices: newChoices })
+                              }}
+                            >
+                              <Trash className="h-4 w-4" />
+                            </Button>
+                          </div>
+                        ))}
+                        <Button
+                          variant="outline"
+                          onClick={() => setEditingQuestion({ ...editingQuestion, choices: [...editingQuestion.choices, ''] })}
+                        >
+                          Add Choice
+                        </Button>
+                      </div>
+                    </div>
+                  )}
+                  {editingQuestion.questionType === 'rating' && (
+                    <div className="grid grid-cols-4 items-center gap-4">
+                      <Label htmlFor="edit-rating-scale" className="text-right">
+                        Rating Scale
+                      </Label>
+                      <div className="col-span-3 flex items-center">
+                        <Input
+                          type="number"
+                          min="1"
+                          max="10"
+                          value={editingQuestion.choices[1] || '5'}
+                          onChange={(e) => setEditingQuestion({ ...editingQuestion, choices: ['1', e.target.value] })}
+                          className="w-20 mr-2"
+                        />
+                        <span>points</span>
+                      </div>
+                    </div>
+                  )}
                 </div>
                 <DialogFooter>
                   <Button type="submit" onClick={handleUpdateQuestion}>Save Changes</Button>
@@ -411,6 +523,34 @@ export default function EnhancedSurveyManagement() {
 
         <TabsContent value="responses">
           <h2 className="text-2xl font-semibold mb-4">Responses</h2>
+          <div className="flex space-x-4 mb-4">
+            <div className="flex-1">
+              <Label htmlFor="stakeholder-search">Search by Stakeholder</Label>
+              <div className="flex items-center">
+                <Input
+                  id="stakeholder-search"
+                  value={stakeholderSearch}
+                  onChange={(e) => setStakeholderSearch(e.target.value)}
+                  placeholder="Enter stakeholder name"
+                  className="mr-2"
+                />
+                <Search className="h-4 w-4 text-gray-500" />
+              </div>
+            </div>
+            <div className="flex-1">
+              <Label htmlFor="survey-search">Search by Survey</Label>
+              <div className="flex items-center">
+                <Input
+                  id="survey-search"
+                  value={surveySearch}
+                  onChange={(e) => setSurveySearch(e.target.value)}
+                  placeholder="Enter survey title"
+                  className="mr-2"
+                />
+                <Search className="h-4 w-4 text-gray-500" />
+              </div>
+            </div>
+          </div>
           <Table>
             <TableHeader>
               <TableRow>
@@ -421,7 +561,7 @@ export default function EnhancedSurveyManagement() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {responses.map((response) => (
+              {filteredResponses.map((response) => (
                 <TableRow key={response.id}>
                   <TableCell>{stakeholders.find(s => s.id === response.stakeholderId)?.stakeholderName}</TableCell>
                   <TableCell>{surveys.find(s => s.id === response.surveyId)?.title}</TableCell>
@@ -435,6 +575,34 @@ export default function EnhancedSurveyManagement() {
 
         <TabsContent value="submissions">
           <h2 className="text-2xl font-semibold mb-4">Submissions</h2>
+          <div className="flex space-x-4 mb-4">
+            <div className="flex-1">
+              <Label htmlFor="stakeholder-search">Search by Stakeholder</Label>
+              <div className="flex items-center">
+                <Input
+                  id="stakeholder-search"
+                  value={stakeholderSearch}
+                  onChange={(e) => setStakeholderSearch(e.target.value)}
+                  placeholder="Enter stakeholder name"
+                  className="mr-2"
+                />
+                <Search className="h-4 w-4 text-gray-500" />
+              </div>
+            </div>
+            <div className="flex-1">
+              <Label htmlFor="survey-search">Search by Survey</Label>
+              <div className="flex items-center">
+                <Input
+                  id="survey-search"
+                  value={surveySearch}
+                  onChange={(e) => setSurveySearch(e.target.value)}
+                  placeholder="Enter survey title"
+                  className="mr-2"
+                />
+                <Search className="h-4 w-4 text-gray-500" />
+              </div>
+            </div>
+          </div>
           <Table>
             <TableHeader>
               <TableRow>
@@ -444,7 +612,7 @@ export default function EnhancedSurveyManagement() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {submissions.map((submission) => (
+              {filteredSubmissions.map((submission) => (
                 <TableRow key={submission.id}>
                   <TableCell>{stakeholders.find(s => s.id === submission.stakeholderId)?.stakeholderName}</TableCell>
                   <TableCell>{surveys.find(s => s.id === submission.surveyId)?.title}</TableCell>
