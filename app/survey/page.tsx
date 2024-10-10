@@ -1,15 +1,15 @@
 "use client"
 import Link from 'next/link'
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
+import { Card, CardContent, CardDescription, CardFooter, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { BookOpen, TrendingUp, Users, Network } from 'lucide-react'
+import { NotebookPenIcon } from 'lucide-react'
 import Layout from '@/components/layout/Layout'
 
 const surveyPages = [
   {
     title: "Enhanced Survey Management",
-    description: "Add and Mananage User Survey",
-    icon: <BookOpen className="w-12 h-12 mb-4" />,
+    description: "Add and Manage Stakeholder's Survey",
+    icon: <NotebookPenIcon className="w-12 h-12 mb-4" />,
     link: "survey/manage",
     color: "from-gray-600 to-gray-800"
   }
@@ -20,27 +20,10 @@ export default function StakeholderSurveyPage() {
     <Layout>
       <div className="min-h-screen bg-gradient-to-br from-gray-100 to-white p-8">
         <div className="max-w-6xl mx-auto">
-          
-          {/* API Key Notification Section */}
-          <div className="bg-yellow-50 border-l-4 border-yellow-400 p-4 mb-8 rounded-md shadow-md">
-            <div className="flex items-center justify-between">
-              <div>
-                <h2 className="text-lg font-semibold text-yellow-800">API Key Required</h2>
-                <p className="text-yellow-700">
-                  To use the Stakeholder Analytics Hub, you need to generate an API key. This key will provide you access to all the available analytics tools.
-                </p>
-              </div>
-              <Link href="/api-manage" passHref>
-                <Button className="bg-yellow-600 text-white hover:bg-yellow-700 transition-colors duration-300">
-                  Generate API Key
-                </Button>
-              </Link>
-            </div>
-          </div>
 
           <header className="text-center mb-12">
-            <h1 className="text-4xl font-bold text-black mb-4">Stakeholder Analytics Hub</h1>
-            <p className="text-xl text-gray-600">Unlock the power of data-driven stakeholder management</p>
+            <h1 className="text-4xl font-bold text-black mb-4">Stakeholder Suvery Management</h1>
+            <p className="text-xl text-gray-600">Reach To The Stakeholder</p>
           </header>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
