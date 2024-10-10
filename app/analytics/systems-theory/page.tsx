@@ -4,9 +4,8 @@ import { useState } from "react"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
 import { Button } from "@/components/ui/button"
-import { BarChart2, GitBranch, Network, Zap, Plus, Minus } from 'lucide-react'
+import { BarChart2, GitBranch, Zap, Plus, Minus } from 'lucide-react'
 import Layout from '@/components/layout/Layout'
 import axios from 'axios';
 
@@ -19,18 +18,18 @@ export default function StakeholderAnalytics() {
     { name: "Stakeholder C", connectionStrength: 0.6, influence: 0.4 }
   ])
   const [deltaBehavior, setDeltaBehavior] = useState([0.2, -0.1, 0.3])
-  const [simResult, setSimResult] = useState(null)
-  const [dsiResult, setDsiResult] = useState(null)
-  const [sisResult, setSisResult] = useState(null)
-  const [snsResult, setSnsResult] = useState(null)
+  const [simResult, setSimResult] = useState("")
+  const [dsiResult, setDsiResult] = useState("")
+  const [sisResult, setSisResult] = useState("")
+  const [snsResult, setSnsResult] = useState("")
 
-  const handleStakeholderChange = (index, field, value) => {
+  const handleStakeholderChange = (index: number, field: string, value: string) => {
     const updatedStakeholders = [...stakeholders]
     updatedStakeholders[index][field] = field === 'name' ? value : parseFloat(value)
     setStakeholders(updatedStakeholders)
   }
 
-  const handleDeltaBehaviorChange = (index, value) => {
+  const handleDeltaBehaviorChange = (index: number, value: string) => {
     const updatedDeltaBehavior = [...deltaBehavior]
     updatedDeltaBehavior[index] = parseFloat(value)
     setDeltaBehavior(updatedDeltaBehavior)
@@ -41,7 +40,7 @@ export default function StakeholderAnalytics() {
     setDeltaBehavior([...deltaBehavior, 0])
   }
 
-  const removeStakeholder = (index) => {
+  const removeStakeholder = (index: number) => {
     if (stakeholders.length > 1) {
       const updatedStakeholders = stakeholders.filter((_, i) => i !== index)
       const updatedDeltaBehavior = deltaBehavior.filter((_, i) => i !== index)
@@ -50,61 +49,90 @@ export default function StakeholderAnalytics() {
     }
   }
 
+  const formatResult = (result: { [s: string]: unknown } | ArrayLike<unknown>) => {
+    return (
+      <div>
+        {Object.entries(result).map(([key, value], idx) => (
+          <div key={idx} className="mb-4">
+            <h4 className="font-bold">{key}:</h4>
+            {Array.isArray(value)
+              ? value.map((subItem, subIdx) => (
+                <div key={subIdx} className="ml-4">
+                  {Object.entries(subItem).map(([subKey, subValue]) => (
+                    <p key={subKey} className="ml-4">
+                      {subKey}: {typeof subValue === "object" ? subValue.description : subValue}
+                    </p>
+                  ))}
+                </div>
+              ))
+              : typeof value === "object"
+                ? Object.entries(value).map(([subKey, subValue]) => (
+                  <p key={subKey} className="ml-4">
+                    {subKey}: {subValue}
+                  </p>
+                ))
+                : <p className="ml-4">{value}</p>}
+          </div>
+        ))}
+      </div>
+    );
+  };
 
-const calculateSIM = async () => {
-  try {
-    const response = await axios.post('http://localhost:9091/api/calculate_sim', {
-      stakeholders
-    }, {
-      headers: { 'Content-Type': 'application/json' }
-    });
 
-    setSimResult(response.data["Stakeholder Influence Matrix (SIM)"]);
-  } catch (error) {
-    console.error("Error calculating SIM:", error);
-    setSimResult("Error calculating SIM. Please try again.");
+  const calculateSIM = async () => {
+    try {
+      const response = await axios.post('http://localhost:9091/api/calculate_sim', {
+        stakeholders
+      }, {
+        headers: { 'Content-Type': 'application/json' }
+      });
+
+      setSimResult(response.data["Stakeholder Influence Matrix (SIM)"]);
+    } catch (error) {
+      console.error("Error calculating SIM:", error);
+      setSimResult("Error calculating SIM. Please try again.");
+    }
   }
-}
 
 
-const calculateDSI = async () => {
-  try {
-    const response = await axios.post('http://localhost:9091/api/calculate_dsi', {
-      stakeholders,
-      deltaBehavior
-    });
-    setDsiResult(response.data["Dynamic Stakeholder Impact (DSI)"]);
-  } catch (error) {
-    console.error("Error calculating DSI:", error);
-    setDsiResult("Error calculating DSI. Please try again.");
-  }
-};
+  const calculateDSI = async () => {
+    try {
+      const response = await axios.post('http://localhost:9091/api/calculate_dsi', {
+        stakeholders,
+        deltaBehavior
+      });
+      setDsiResult(response.data["Dynamic Stakeholder Impact (DSI)"]);
+    } catch (error) {
+      console.error("Error calculating DSI:", error);
+      setDsiResult("Error calculating DSI. Please try again.");
+    }
+  };
 
 
-const calculateSIS = async () => {
-  try {
-    const response = await axios.post('http://localhost:9091/api/calculate_sis', {
-      stakeholders
-    });
-    setSisResult(response.data["Systemic Influence Score (SIS)"]);
-  } catch (error) {
-    console.error("Error calculating SIS:", error);
-    setSisResult("Error calculating SIS. Please try again.");
-  }
-};
+  const calculateSIS = async () => {
+    try {
+      const response = await axios.post('http://localhost:9091/api/calculate_sis', {
+        stakeholders
+      });
+      setSisResult(response.data["Systemic Influence Score (SIS)"]);
+    } catch (error) {
+      console.error("Error calculating SIS:", error);
+      setSisResult("Error calculating SIS. Please try again.");
+    }
+  };
 
-const calculateSNS = async () => {
-  try {
-    const response = await axios.post('http://localhost:9091/api/calculate_sns', {
-      stakeholders,
-      deltaBehavior
-    });
-    setSnsResult(response.data["Stakeholder Network Stability (SNS)"]);
-  } catch (error) {
-    console.error("Error calculating SNS:", error);
-    setSnsResult("Error calculating SNS. Please try again.");
-  }
-};
+  const calculateSNS = async () => {
+    try {
+      const response = await axios.post('http://localhost:9091/api/calculate_sns', {
+        stakeholders,
+        deltaBehavior
+      });
+      setSnsResult(response.data["Stakeholder Network Stability (SNS)"]);
+    } catch (error) {
+      console.error("Error calculating SNS:", error);
+      setSnsResult("Error calculating SNS. Please try again.");
+    }
+  };
 
 
   return (
@@ -188,12 +216,18 @@ const calculateSNS = async () => {
                   </Button>
                   <Button onClick={calculateSIM} className="w-full bg-black text-white hover:bg-gray-800">Calculate SIM</Button>
                 </div>
-                {simResult && (
+                {/* {simResult && (
                   <div className="mt-6 p-4 bg-gray-100 rounded-lg border border-black">
                     <h3 className="text-lg font-semibold text-black mb-2">Stakeholder Influence Matrix (SIM):</h3>
                     <pre className="bg-white p-4 rounded border border-gray-300 overflow-x-auto">
                       {JSON.stringify(simResult, null, 2)}
                     </pre>
+                  </div>
+                )} */}
+                {simResult && (
+                  <div className="mt-4 p-4 bg-gray-100 rounded-lg shadow-md">
+                    <h4 className="font-bold text-lg">SIM Results:</h4>
+                    {formatResult(simResult)}
                   </div>
                 )}
               </TabsContent>
@@ -239,12 +273,19 @@ const calculateSNS = async () => {
                   </Button>
                   <Button onClick={calculateDSI} className="w-full bg-black text-white hover:bg-gray-800">Calculate DSI</Button>
                 </div>
-                {dsiResult && (
+                {/* {dsiResult && (
                   <div className="mt-6 p-4 bg-gray-100 rounded-lg border border-black">
                     <h3 className="text-lg font-semibold text-black mb-2">Dynamic Stakeholder Impact (DSI):</h3>
                     <pre className="bg-white p-4 rounded border border-gray-300 overflow-x-auto">
                       {JSON.stringify(dsiResult, null, 2)}
                     </pre>
+                  </div>
+                )} */}
+
+                {dsiResult && (
+                  <div className="mt-4 p-4 bg-gray-100 rounded-lg shadow-md">
+                    <h4 className="font-bold text-lg">DSI Results:</h4>
+                    {formatResult(dsiResult)}
                   </div>
                 )}
               </TabsContent>
@@ -283,12 +324,19 @@ const calculateSNS = async () => {
                   </Button>
                   <Button onClick={calculateSIS} className="w-full bg-black text-white hover:bg-gray-800">Calculate SIS</Button>
                 </div>
-                {sisResult && (
+                {/* {sisResult && (
                   <div className="mt-6 p-4 bg-gray-100 rounded-lg border border-black">
                     <h3 className="text-lg font-semibold text-black mb-2">Systemic Influence Score (SIS):</h3>
                     <pre className="bg-white p-4 rounded border border-gray-300 overflow-x-auto">
                       {JSON.stringify(sisResult, null, 2)}
                     </pre>
+                  </div>
+                )} */}
+
+                {sisResult && (
+                  <div className="mt-4 p-4 bg-gray-100 rounded-lg shadow-md">
+                    <h4 className="font-bold text-lg">SIS Results:</h4>
+                    {formatResult(sisResult)}
                   </div>
                 )}
               </TabsContent>
@@ -334,12 +382,19 @@ const calculateSNS = async () => {
                   </Button>
                   <Button onClick={calculateSNS} className="w-full bg-black text-white hover:bg-gray-800">Calculate SNS</Button>
                 </div>
-                {snsResult && (
+                {/* {snsResult && (
                   <div className="mt-6 p-4 bg-gray-100 rounded-lg border border-black">
                     <h3 className="text-lg font-semibold text-black mb-2">Stakeholder Network Stability (SNS):</h3>
                     <pre className="bg-white p-4 rounded border border-gray-300 overflow-x-auto">
                       {JSON.stringify(snsResult, null, 2)}
                     </pre>
+                  </div>
+                )} */}
+
+                {snsResult && (
+                  <div className="mt-4 p-4 bg-gray-100 rounded-lg shadow-md">
+                    <h4 className="font-bold text-lg">SNS Results:</h4>
+                    {formatResult(snsResult)}
                   </div>
                 )}
               </TabsContent>
