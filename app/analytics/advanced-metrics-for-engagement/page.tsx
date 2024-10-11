@@ -29,17 +29,17 @@ export default function AdvancedMetricsPage() {
                                 <TabsTrigger value="eps"
                                              className="flex items-center justify-center data-[state=active]:bg-black data-[state=active]:text-white">
                                     <Calculator className="w-4 h-4 mr-2"/>
-                                    <span className="hidden md:inline">EPS</span>
+                                    <span className="hidden md:inline">Engagement Priority Score</span>
                                 </TabsTrigger>
                                 <TabsTrigger value="bsc"
                                              className="flex items-center justify-center data-[state=active]:bg-black data-[state=active]:text-white">
                                     <BarChart2 className="w-4 h-4 mr-2"/>
-                                    <span className="hidden md:inline">BSC</span>
+                                    <span className="hidden md:inline">Balanced Scorecard (BSC)</span>
                                 </TabsTrigger>
                                 <TabsTrigger value="tes"
                                              className="flex items-center justify-center data-[state=active]:bg-black data-[state=active]:text-white">
                                     <TrendingDown className="w-4 h-4 mr-2"/>
-                                    <span className="hidden md:inline">TES</span>
+                                    <span className="hidden md:inline">Total Engagement Score (TES)</span>
                                 </TabsTrigger>
                             </TabsList>
 
