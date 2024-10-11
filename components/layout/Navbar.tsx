@@ -85,6 +85,7 @@ export default function Navbar({ toggleSidebar }: NavbarProps) {
                 className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center"
                 onClick={() => {
                   localStorage.removeItem("token");
+                  localStorage.removeItem("email");
                   router.push("/sign-in");
                 }}
               >

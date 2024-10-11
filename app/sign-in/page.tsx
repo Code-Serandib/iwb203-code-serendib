@@ -28,25 +28,49 @@ export default function SignIn() {
 
   async function handleOAuthLogin(provider: string) {
     window.location.href = `http://localhost:9091/api/${provider}Login`;
-      // try {
-      //   setIsLoading(true);
-      //   const response = await baseRoute.get(`/auth/googleLogin`, {
-      //     headers: {
-      //       'Access-Control-Allow-Origin': '*',
-      //       'Access-Control-Allow-Credentials': true,
-      //     },
-      //     withCredentials: true
-      //   });
-      //   if (response.status === 200 || response.status === 201) {
-      //     // window.location.href = response.data.redirectUrl;
-      //     console.log("reponse.data :"+response.data);
-      //   }
-      // } catch (error) {
-      //   console.error("OAuth login failed:", error);
-      // } finally {
-      //   setIsLoading(false);
-      // }
   }
+
+  async function checkUserExistence(authCode: string) {
+    try {
+        const callbackUrl = `http://localhost:9091/api/callback?code=${authCode}`;
+
+        // Send the authorization code to the backend to get user info.
+        const response = await fetch(callbackUrl, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            credentials: 'include' // Include cookies if necessary
+        });
+
+        if (response.ok) {
+            const result = await response.json();
+            if (result.user_email) {
+                console.log(`User exists: ${result.user_email}`);
+                alert(`Welcome back, ${result.user_email}!`);
+            } else {
+                console.log("User does not exist. Please sign up.");
+                alert("User does not exist. Please sign up.");
+            }
+        } else {
+            console.log("Authorization failed or user does not exist.");
+            alert("Authorization failed or user does not exist.");
+        }
+    } catch (error) {
+        console.error('Error checking user existence:', error);
+    }
+}
+
+// Detect the authorization code in the URL
+useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const authCode = urlParams.get('code');
+    
+    if (authCode) {
+        // If the URL contains an authorization code, call checkUserExistence
+        checkUserExistence(authCode);
+    }
+}, []);
 
   async function onSubmit(event: React.SyntheticEvent) {
     event.preventDefault();
@@ -64,6 +88,7 @@ export default function SignIn() {
       if (response.status === 200 || response.status === 201) {
         console.log("Login successful:", response.data);
         localStorage.setItem("token", response.data.token);
+        localStorage.setItem("email", email);
         console.log("Headers :", headers);
         router.push("/home");
       } else {

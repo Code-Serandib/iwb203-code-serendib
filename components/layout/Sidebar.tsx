@@ -1,6 +1,6 @@
 "use client";
 import { useState } from 'react';
-import { Home, Users, PieChart, ChevronLeft, ChevronRight, NotebookPen } from 'lucide-react';
+import { Home, Users, PieChart, ChevronLeft, ChevronRight, PresentationIcon, NotebookPen } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 
@@ -18,6 +18,7 @@ export default function Sidebar({ isMobileMenuOpen, toggleSidebar }: SidebarProp
     { href: '/stakeholders', label: 'Stakeholders', icon: Users },
     { href: '/analytics', label: 'Analytics', icon: PieChart },
     { href: '/survey/manage', label: 'Surveys', icon: NotebookPen },
+    { href: '/meetings', label: 'Meetings', icon: PresentationIcon },
   ];
 
   const toggleSidebarCollapse = () => {
