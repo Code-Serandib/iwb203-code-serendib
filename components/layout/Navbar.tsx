@@ -23,6 +23,8 @@ export default function Navbar({ toggleSidebar }: NavbarProps) {
         return 'Stakeholders';
       case '/analytics':
         return 'Analytics';
+      case '/survey/manage':
+        return 'Surveys';
       default:
         return ''; // Fallback for unknown paths
     }
