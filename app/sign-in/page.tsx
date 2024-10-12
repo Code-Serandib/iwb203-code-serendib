@@ -34,20 +34,23 @@ export default function SignIn() {
     try {
         const callbackUrl = `http://localhost:9091/api/callback?code=${authCode}`;
 
-        // Send the authorization code to the backend to get user info.
         const response = await fetch(callbackUrl, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json'
             },
-            credentials: 'include' // Include cookies if necessary
+            credentials: 'include'
         });
 
         if (response.ok) {
             const result = await response.json();
             if (result.user_email) {
                 console.log(`User exists: ${result.user_email}`);
-                alert(`Welcome back, ${result.user_email}!`);
+                // alert(`Welcome back, ${result.user_email}!`);
+                localStorage.setItem("email", result.user_email);
+                localStorage.setItem("googleAccessToken", result.access_token);
+                localStorage.setItem("googleRefreshToken", result.refresh_token);
+                router.push("/home");
             } else {
                 console.log("User does not exist. Please sign up.");
                 alert("User does not exist. Please sign up.");
