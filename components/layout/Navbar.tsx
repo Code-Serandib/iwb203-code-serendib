@@ -84,6 +84,8 @@ export default function Navbar({ toggleSidebar }: NavbarProps) {
                 onClick={() => {
                   localStorage.removeItem("token");
                   localStorage.removeItem("email");
+                  localStorage.removeItem("googleAccessToken");
+                  localStorage.removeItem("googleRefreshToken");
                   router.push("/sign-in");
                 }}
               >
