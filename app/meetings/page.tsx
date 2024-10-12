@@ -1,5 +1,4 @@
-'use client'
-
+"use client"
 import { useEffect, useState } from 'react'
 import axios from 'axios'
 import Link from 'next/link'
@@ -19,8 +18,9 @@ import { Label } from "@/components/ui/label"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { CalendarDays, Plus, BarChart } from 'lucide-react'
 import Layout from '@/components/layout/Layout'
+import Multiselect from 'multiselect-react-dropdown' // Import the Multiselect component
 
-// Define the Meeting type to match your backend response structure
+// Define the Meeting and Stakeholder types
 type Meeting = {
     id: number
     title: string
@@ -31,21 +31,40 @@ type Meeting = {
     stakeholders: string
 }
 
+type Stakeholder = {
+    id: number
+    stakeholder_name: string
+}
+
+type Attendance = {
+    stakeholderId: number
+    attendance: boolean
+}
+
 export default function MeetingsPage() {
     const [meetings, setMeetings] = useState<Meeting[]>([])
+    const [stakeholders, setStakeholders] = useState<Stakeholder[]>([]) // State for all stakeholders
     const [selectedMeeting, setSelectedMeeting] = useState<Meeting | null>(null)
-    const [newMeeting, setNewMeeting] = useState<{ title: string; date: Date; time: string; stakeholders: string; location: string; description: string }>({
+    const [newMeeting, setNewMeeting] = useState<{
+        title: string;
+        date: Date;
+        time: string;
+        stakeholders: Stakeholder[];
+        location: string;
+        description: string
+    }>({
         title: '',
         date: new Date(),
         time: '',
-        stakeholders: '',
+        stakeholders: [],
         location: '',
         description: ''
-    })
+    });
     const [isDialogOpen, setIsDialogOpen] = useState(false)
     const [isMeetingDetailsOpen, setIsMeetingDetailsOpen] = useState(false)
-    const [filter, setFilter] = useState<'upcoming' | 'all'>('upcoming') // Filter state
+    const [filter, setFilter] = useState<'upcoming' | 'all'>('all') // Filter state
     const [attendance, setAttendance] = useState<{ [key: string]: boolean }>({}) // Attendance state
+    const [error, setError] = useState('')
 
     // Fetch meetings from backend based on the filter
     useEffect(() => {
@@ -59,8 +78,38 @@ export default function MeetingsPage() {
             })
     }, [filter])
 
+    // Fetch all stakeholders for selection
+    useEffect(() => {
+        const userEmail = localStorage.getItem('email');
+        const token = localStorage.getItem('token');
+        if (userEmail && token) {
+            axios.get(`http://localhost:9091/api/getAllStakeholder`, {
+                params: {
+                    user_email: userEmail
+                },
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            })
+                .then(response => {
+                    console.log('Stakeholders data:', response.data);
+                    setStakeholders(response.data);
+                })
+                .catch(error => {
+                    console.error('Error fetching stakeholders:', error);
+                });
+        } else {
+            console.error('User email or token not found in localStorage');
+        }
+    }, []);
+
     const handleNewMeeting = (e: React.FormEvent) => {
         e.preventDefault()
+
+        if (newMeeting.stakeholders.length === 0) {
+            setError('Please select at least one stakeholder')
+            return
+        }
 
         const formattedDate = newMeeting.date.toISOString().split('T')[0]
 
@@ -70,13 +119,13 @@ export default function MeetingsPage() {
             meeting_date: formattedDate,
             meeting_time: newMeeting.time,
             location: newMeeting.location,
-            stakeholders: newMeeting.stakeholders
+            stakeholders: newMeeting.stakeholders.map(stakeholder => stakeholder.id), // Get IDs of selected stakeholders
         }
 
         axios.post('http://localhost:9091/api/schedule_meeting', updatedMeeting)
             .then(response => {
                 setMeetings(prevMeetings => [...prevMeetings, response.data])
-                setNewMeeting({ title: '', date: new Date(), time: '', stakeholders: '', location: '', description: '' })
+                setNewMeeting({ title: '', date: new Date(), time: '', stakeholders: [], location: '', description: '' })
                 setIsDialogOpen(false)
             })
             .catch(error => {
@@ -84,28 +133,57 @@ export default function MeetingsPage() {
             })
     }
 
-    const handleMeetingClick = (id: number) => {
-        axios.get(`http://localhost:9091/api/meetings/${id}`)
-            .then(response => {
-                setSelectedMeeting(response.data)
-                // Initialize attendance state for stakeholders
-                const initialAttendance = response.data.stakeholders.split(',').reduce((acc: any, stakeholder: string) => {
-                    acc[stakeholder.trim()] = false
-                    return acc
-                }, {})
-                setAttendance(initialAttendance)
-                setIsMeetingDetailsOpen(true)
-            })
-            .catch(error => {
-                console.error('Error fetching meeting details:', error)
-            })
+    const handleMeetingClick = async (id: number) => {
+        try {
+            // Fetch meeting details
+            const response = await axios.get(`http://localhost:9091/api/meetings/${id}`);
+            setSelectedMeeting(response.data);
+
+            // Fetch attendance data
+            const attendanceResponse = await axios.get(`http://localhost:9091/api/attendance/${id}`);
+            const attendanceData: Attendance[] = attendanceResponse.data;
+
+            // Initialize attendance state for stakeholders
+            const initialAttendance = {};
+            attendanceData.forEach(({ stakeholderId, attendance }) => {
+                initialAttendance[stakeholderId] = attendance;
+            });
+            setAttendance(initialAttendance);
+            setIsMeetingDetailsOpen(true);
+        } catch (error) {
+            console.error('Error fetching meeting details:', error);
+        }
     }
 
     // Handle attendance change
-    const handleAttendanceChange = (stakeholder: string) => {
-        setAttendance(prevState => ({
+    const handleAttendanceChange = (stakeholderId: number) => {
+        setAttendance(prevState => {
+            const newAttendance = !prevState[stakeholderId]; // Toggle attendance
+            markAttendance(selectedMeeting?.id, stakeholderId, newAttendance); // Call API
+            return {
+                ...prevState,
+                [stakeholderId]: newAttendance
+            };
+        });
+    }
+
+    const markAttendance = async (meetingId: number | undefined, stakeholderId: number, attended: boolean) => {
+        try {
+            await axios.post('http://localhost:9091/api/mark_attendance', {
+                meetingId,
+                stakeholderId,
+                attended
+            });
+        } catch (error) {
+            console.error('Error marking attendance:', error);
+        }
+    };
+
+    // Handle stakeholder selection
+    const handleStakeholderSelect = (selectedList: Stakeholder[], selectedItem: Stakeholder) => {
+        setNewMeeting(prevState => ({
             ...prevState,
-            [stakeholder]: !prevState[stakeholder]
+            stakeholders: selectedList
         }))
     }
 
@@ -116,11 +194,11 @@ export default function MeetingsPage() {
                     <header className="flex justify-between items-center mb-8">
                         <h1 className="text-3xl font-bold text-black">Stakeholder Meetings</h1>
                         <div className="flex space-x-4">
-                            <Button onClick={() => setFilter('upcoming')} className={`bg-${filter === 'upcoming' ? 'black' : 'gray-500'} text-white`}>
-                                Upcoming Meetings
-                            </Button>
                             <Button onClick={() => setFilter('all')} className={`bg-${filter === 'all' ? 'black' : 'gray-500'} text-white`}>
                                 All Meetings
+                            </Button>
+                            <Button onClick={() => setFilter('upcoming')} className={`bg-${filter === 'upcoming' ? 'black' : 'gray-500'} text-white`}>
+                                Upcoming Meetings
                             </Button>
                             <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
                                 <DialogTrigger asChild>
@@ -128,7 +206,7 @@ export default function MeetingsPage() {
                                         <Plus className="mr-2 h-4 w-4" /> Schedule Meeting
                                     </Button>
                                 </DialogTrigger>
-                                <DialogContent>
+                                <DialogContent className="max-h-[80vh] overflow-y-auto" >
                                     <DialogHeader>
                                         <DialogTitle>Schedule New Meeting</DialogTitle>
                                         <DialogDescription>Enter the details for the new stakeholder meeting.</DialogDescription>
@@ -163,13 +241,18 @@ export default function MeetingsPage() {
                                             />
                                         </div>
                                         <div>
-                                            <Label htmlFor="stakeholders">Stakeholders (comma-separated)</Label>
-                                            <Input
-                                                id="stakeholders"
-                                                value={newMeeting.stakeholders}
-                                                onChange={(e) => setNewMeeting({ ...newMeeting, stakeholders: e.target.value })}
-                                                required
+                                            <Label htmlFor="stakeholders">Select Stakeholders</Label>
+                                            <Multiselect
+                                                options={stakeholders} // Options to display in the dropdown
+                                                selectedValues={newMeeting.stakeholders} // Preselected values
+                                                onSelect={handleStakeholderSelect} // Function will trigger on select event
+                                                onRemove={handleStakeholderSelect} // Function will trigger on remove event
+                                                displayValue="stakeholder_name" // Property to display in the dropdown
+                                                showCheckbox={true} // Show checkboxes for options
+                                                selectedStyle={{ color: 'black' }} // Style for selected options
+                                                className="my-2"
                                             />
+                                            {error && <p className="text-red-500">{error}</p>}
                                         </div>
                                         <div>
                                             <Label htmlFor="location">Location</Label>
@@ -193,75 +276,67 @@ export default function MeetingsPage() {
                                     </form>
                                 </DialogContent>
                             </Dialog>
-                            <Link href="/meetings/analytics">
-                                <Button variant="outline" className="border-black text-black hover:bg-black hover:text-white">
-                                    <BarChart className="mr-2 h-4 w-4" /> Meeting Analytics
-                                </Button>
-                            </Link>
                         </div>
                     </header>
-
-                    <Card>
-                        <CardHeader>
-                            <CardTitle>{filter === 'upcoming' ? 'Upcoming Meetings' : 'All Meetings'}</CardTitle>
-                            <CardDescription>View and manage your scheduled stakeholder meetings</CardDescription>
-                        </CardHeader>
-                        <CardContent>
-                            <Table>
-                                <TableHeader>
-                                    <TableRow>
-                                        <TableHead>Title</TableHead>
-                                        <TableHead>Date</TableHead>
-                                        <TableHead>Time</TableHead>
-                                        <TableHead>Stakeholders</TableHead>
-                                    </TableRow>
-                                </TableHeader>
-                                <TableBody>
-                                    {meetings.map((meeting: Meeting) => (
-                                        <TableRow key={meeting.id} onClick={() => handleMeetingClick(meeting.id)} className="cursor-pointer">
-                                            <TableCell className="font-medium">{meeting.title}</TableCell>
-                                            <TableCell>{meeting.meeting_date}</TableCell>
-                                            <TableCell>{meeting.meeting_time}</TableCell>
-                                            <TableCell>{meeting.stakeholders}</TableCell>
-                                        </TableRow>
-                                    ))}
-                                </TableBody>
-                            </Table>
-                        </CardContent>
-                    </Card>
-
-                    {selectedMeeting && (
-                        <Dialog open={isMeetingDetailsOpen} onOpenChange={setIsMeetingDetailsOpen}>
-                            <DialogContent>
-                                <DialogHeader>
-                                    <DialogTitle>{selectedMeeting.title}</DialogTitle>
-                                    <DialogDescription>{selectedMeeting.description}</DialogDescription>
-                                </DialogHeader>
-                                <div className="space-y-4">
-                                    <p><strong>Date:</strong> {selectedMeeting.meeting_date}</p>
-                                    <p><strong>Time:</strong> {selectedMeeting.meeting_time}</p>
-                                    <p><strong>Location:</strong> {selectedMeeting.location}</p>
-                                    <div>
-                                        <h4 className="font-bold">Stakeholders</h4>
-                                        <ul>
-                                            {selectedMeeting.stakeholders.split(',').map((stakeholder: string) => (
-                                                <li key={stakeholder} className="flex items-center space-x-2">
-                                                    <input
-                                                        type="checkbox"
-                                                        checked={attendance[stakeholder.trim()]}
-                                                        onChange={() => handleAttendanceChange(stakeholder.trim())}
-                                                    />
-                                                    <span>{stakeholder.trim()}</span>
-                                                </li>
-                                            ))}
-                                        </ul>
-                                    </div>
-                                </div>
-                            </DialogContent>
-                        </Dialog>
-                    )}
+                    <Table>
+                        <TableHeader>
+                            <TableRow>
+                                <TableHead>Meeting Title</TableHead>
+                                <TableHead>Meeting Date</TableHead>
+                                <TableHead>Meeting Time</TableHead>
+                                <TableHead>Actions</TableHead>
+                            </TableRow>
+                        </TableHeader>
+                        <TableBody>
+                            {meetings.map(meeting => (
+                                <TableRow key={meeting.id}>
+                                    <TableCell>{meeting.title}</TableCell>
+                                    <TableCell>{meeting.meeting_date}</TableCell>
+                                    <TableCell>{meeting.meeting_time}</TableCell>
+                                    <TableCell>
+                                        <Button onClick={() => handleMeetingClick(meeting.id)} className="bg-black text-white hover:bg-gray-800">
+                                            View Details
+                                        </Button>
+                                    </TableCell>
+                                </TableRow>
+                            ))}
+                        </TableBody>
+                    </Table>
                 </div>
             </div>
+
+            {/* Meeting Details Dialog */}
+            <Dialog open={isMeetingDetailsOpen} onOpenChange={setIsMeetingDetailsOpen}>
+                <DialogContent>
+                    <DialogHeader>
+                        <DialogTitle>Meeting Details</DialogTitle>
+                        <DialogDescription>{selectedMeeting?.description}</DialogDescription>
+                    </DialogHeader>
+                    <h2 className="text-lg font-bold">Stakeholders Attendance</h2>
+                    <Table>
+                        <TableHeader>
+                            <TableRow>
+                                <TableHead>Stakeholder</TableHead>
+                                <TableHead>Attendance</TableHead>
+                            </TableRow>
+                        </TableHeader>
+                        <TableBody>
+                            {stakeholders.map(stakeholder => (
+                                <TableRow key={stakeholder.id}>
+                                    <TableCell>{stakeholder.stakeholder_name}</TableCell>
+                                    <TableCell>
+                                        <input
+                                            type="checkbox"
+                                            checked={attendance[stakeholder.id] || false}
+                                            onChange={() => handleAttendanceChange(stakeholder.id)}
+                                        />
+                                    </TableCell>
+                                </TableRow>
+                            ))}
+                        </TableBody>
+                    </Table>
+                </DialogContent>
+            </Dialog>
         </Layout>
     )
 }
