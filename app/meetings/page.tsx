@@ -206,7 +206,8 @@ export default function MeetingsPage() {
                                         <Plus className="mr-2 h-4 w-4" /> Schedule Meeting
                                     </Button>
                                 </DialogTrigger>
-                                <DialogContent className="max-h-[80vh] overflow-y-auto" >
+
+                                <DialogContent className="max-h-[80vh] overflow-y-auto">
                                     <DialogHeader>
                                         <DialogTitle>Schedule New Meeting</DialogTitle>
                                         <DialogDescription>Enter the details for the new stakeholder meeting.</DialogDescription>
