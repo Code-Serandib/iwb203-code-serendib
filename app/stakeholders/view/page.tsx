@@ -1,4 +1,4 @@
-"use client"; // Add this line at the top
+"use client";
 
 import { useEffect, useState } from "react";
 import axios from "axios";

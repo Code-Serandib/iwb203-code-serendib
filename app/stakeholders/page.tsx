@@ -80,7 +80,7 @@ export default function StakeholderRegistration() {
   useEffect(() => {
     async function fetchStakeholderTypes() {
       try {
-        const response = await fetch("http://localhost:9091/api/types"); // Replace with actual API URL
+        const response = await fetch("http://localhost:9091/api/types");
         const data = await response.json();
         setTypes(data);
       } catch (error) {

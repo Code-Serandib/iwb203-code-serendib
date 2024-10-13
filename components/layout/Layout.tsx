@@ -5,7 +5,6 @@ import Navbar from './Navbar'
 import axios from 'axios';
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { jwtDecode } from 'jwt-decode'; 
 
 interface LayoutProps {
     children: ReactNode
@@ -20,74 +19,95 @@ const Layout = ({ children }: LayoutProps) => {
 
     const router = useRouter();
 
-  useEffect(() => {
-    const token = localStorage.getItem("token");
-    const googleAccessToken = localStorage.getItem("googleAccessToken");
-    const googleRefreshToken = localStorage.getItem("googleRefreshToken");
-    const email = localStorage.getItem("email");
-
-    console.log("Google Access Token:", googleAccessToken);
-    console.log("Google Refresh Token:", googleRefreshToken);
-
-    if (!token) {
-      if (googleAccessToken) {
-        validateGoogleToken(googleAccessToken, googleRefreshToken);
-      } else {
-        router.push("/sign-in");
-      }
-
-    } else {
-      axios.get("http://localhost:9091/api/validateToken", {
-        headers: { Authorization: `Bearer ${token}` }
-      })
-      .then(response => {
-        console.log("Autho :", token);
-        console.log(response.data);
-      })
-      .catch(error => {
-        console.error("Token validation failed:", error);
-        router.push("/sign-in");
-      });
-    }
-  }, [router]);
-
-  const validateGoogleToken = async (accessToken: string, googleRefreshToken: any) => {
-    try {
-      const response = await fetch(`https://www.googleapis.com/oauth2/v3/tokeninfo?access_token=${accessToken}`);
-      if (response.ok) {
-        const data = await response.json();
-        const currentTime = Math.floor(Date.now() / 1000);
-  
-        // Check if token is expired
-        if (data.exp < currentTime) {
-          console.log("Access token is expired");
-
-          refreshAccessToken(googleRefreshToken).then(newAccessToken => {
-              if (newAccessToken) {
-                  // Store the new access token
-                  localStorage.setItem("googleAccessToken", newAccessToken);
-                  console.log("New access token received and stored.");
-              } else {
-                  // If refreshing the token fails, redirect to sign-in
-                  router.push("/sign-in");
-              }
-          }).catch(error => {
-              console.error("Error refreshing access token:", error);
-              router.push("/sign-in");
-          });
-          
+    useEffect(() => {
+      const token = localStorage.getItem("token");
+      const googleAccessToken = localStorage.getItem("googleAccessToken");
+      const googleRefreshToken = localStorage.getItem("googleRefreshToken");
+    
+      // Run both checks in parallel
+      const validations = [];
+      
+      if (!token) {
+        if (googleAccessToken) {
+          validations.push(validateGoogleToken(googleAccessToken, googleRefreshToken));
         } else {
-          console.log("Access token is valid");
+          router.push("/sign-in");
         }
       } else {
-        console.error("Invalid access token");
-        router.push("/sign-in");
+        validations.push(validateBackendToken(token));
       }
-    } catch (error) {
-      console.error("Error validating Google access token:", error);
-      router.push("/sign-in");
-    }
-  };
+    
+      Promise.all(validations)
+        .then(results => {
+          const [googleValid, backendValid] = results;
+          console.log("results ::",results);
+          console.log("googleValid ::",googleValid);
+          console.log("backendValid ::",backendValid);
+          
+          if (!googleValid && !backendValid) {
+            localStorage.removeItem("token");
+            localStorage.removeItem("email");
+            localStorage.removeItem("googleAccessToken");
+            localStorage.removeItem("googleRefreshToken");
+            router.push("/sign-in");
+          }
+        })
+        .catch(error => {
+          console.error("Error in validation:", error);
+          router.push("/sign-in");
+        });
+    }, [router]);
+    
+    const validateGoogleToken = async (accessToken: string, googleRefreshToken: string | null) => {
+      try {
+        const response = await fetch(`https://www.googleapis.com/oauth2/v3/tokeninfo?access_token=${accessToken}`);
+        if (response.ok) {
+          const data = await response.json();
+          const currentTime = Math.floor(Date.now() / 1000);
+          
+          // Check if the token is expired
+          if (data.exp < currentTime) {
+            console.log("Access token expired. Refreshing...");
+            const newAccessToken = await refreshAccessToken(googleRefreshToken);
+            
+            if (newAccessToken) {
+              localStorage.setItem("googleAccessToken", newAccessToken);
+              return true;
+            } else {
+              return false;
+            }
+          } else {
+            console.log("Access token is valid.");
+            return true;
+          }
+        } else {
+          console.error("Invalid Google access token.");
+          return false;
+        }
+      } catch (error) {
+        console.error("Google token validation failed:", error);
+        return false;
+      }
+    };
+    
+    const validateBackendToken = async (token: string) => {
+      try {
+        const response = await axios.get("http://localhost:9091/api/validateToken", {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        
+        if (response.status === 200) {
+          console.log("Backend token is valid.");
+          return true;
+        } else {
+          console.error("Backend token is invalid.");
+          return false;
+        }
+      } catch (error) {
+        console.error("Backend token validation failed:", error);
+        return false;
+      }
+    };
 
   const refreshAccessToken = async (refreshToken: string | null) => {
     try {
@@ -101,7 +121,7 @@ const Layout = ({ children }: LayoutProps) => {
 
         if (response.ok) {
             const result = await response.json();
-            return result.access_token; // Return new access token
+            return result.access_token;
         } else {
             console.error("Failed to refresh access token:", response.statusText);
             return null;
