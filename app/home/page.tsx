@@ -2,15 +2,20 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Users, Calendar as CalendarIcon } from 'lucide-react';
+import { Users, Calendar as CalendarIcon, PieChart } from 'lucide-react';
 import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip, Legend } from 'recharts';
 import Layout from '@/components/layout/Layout';
+import { useRouter } from 'next/navigation';
 
 export default function DashboardPage() {
   const [meetingsByMonth, setMeetingsByMonth] = useState([]);
   const [totalStakeholders, setTotalStakeholders] = useState(0);
   const [totalMeetings, setTotalMeetings] = useState(0);
   const [loading, setLoading] = useState(true);
+  
+  const router = useRouter();
+  const profileUpdated = localStorage.getItem("profileUpdated");
+  const googleAccessToken = localStorage.getItem("googleAccessToken");
 
   useEffect(() => {
     async function fetchData() {
@@ -33,10 +38,50 @@ export default function DashboardPage() {
 
     fetchData();
   }, []);
+  
+  useEffect(() => { 
+    // const profileUpdated = localStorage.getItem("profileUpdated");
+    if (googleAccessToken) {
+      const res = getUserFromAccessToken(googleAccessToken);
+    }
+  }, [router]);
 
   if (loading) {
     return <Layout><div>Loading...</div></Layout>;
   }
+  
+  const getUserFromAccessToken = async (accessToken: string | null) => {
+    try {
+        const response = await fetch("http://localhost:9091/api/getUserDataFromAccessToken", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({ accessToken: accessToken })
+        });
+
+        if (response.ok) {
+            const result = await response.json();
+            console.log("Result user: ",result);
+            if(result.user.address=="" && result.user.contactNumber=="" && result.user.organizationName==""
+               && result.user.organizationType=="" && result.user.industry==""){
+                if(!profileUpdated){
+                   localStorage.setItem("profileUpdated", "updated");
+                   router.push("/profile");
+                }
+
+            }
+              
+            return result;
+        } else {
+            console.error("Failed to retrieve user data:", response.statusText);
+            return null;
+        }
+    } catch (error) {
+        console.error("Error during request:", error);
+        return null;
+    }
+};
 
   return (
     <Layout>
