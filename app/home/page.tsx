@@ -3,8 +3,55 @@
 import Layout from '@/components/layout/Layout';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Users, PieChart } from 'lucide-react';
+import { useEffect } from 'react';
+import { useRouter } from 'next/navigation';
+import axios from 'axios';
 
 export default function DashboardPage() {
+  const router = useRouter();
+  const profileUpdated = localStorage.getItem("profileUpdated");
+  const googleAccessToken = localStorage.getItem("googleAccessToken");
+  useEffect(() => {
+    
+    // const profileUpdated = localStorage.getItem("profileUpdated");
+    if (googleAccessToken) {
+      const res = getUserFromAccessToken(googleAccessToken);
+    }
+
+  }, [router]);
+
+  const getUserFromAccessToken = async (accessToken: string | null) => {
+    try {
+        const response = await fetch("http://localhost:9091/api/getUserDataFromAccessToken", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({ accessToken: accessToken })
+        });
+
+        if (response.ok) {
+            const result = await response.json();
+            console.log("Result user: ",result);
+            if(result.user.address=="" && result.user.contactNumber=="" && result.user.organizationName==""
+               && result.user.organizationType=="" && result.user.industry==""){
+                if(!profileUpdated){
+                   localStorage.setItem("profileUpdated", "updated");
+                   router.push("/profile");
+                }
+
+            }
+              
+            return result;
+        } else {
+            console.error("Failed to retrieve user data:", response.statusText);
+            return null;
+        }
+    } catch (error) {
+        console.error("Error during request:", error);
+        return null;
+    }
+};
 
   return (
     <Layout>

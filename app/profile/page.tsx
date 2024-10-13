@@ -30,9 +30,15 @@ export default function OrganizationProfile() {
   const [password, setPassword] = useState("");
 
   // Fetch user data on component mount
+  const googleAccessToken = localStorage.getItem("googleAccessToken");
   useEffect(() => {
     const fetchUserData = async () => {
       const storedEmail = localStorage.getItem("email");
+
+      if (googleAccessToken) {
+        const res = getUserFromAccessToken(googleAccessToken);
+      }
+
       if (!storedEmail) return;
 
       try {
@@ -50,7 +56,7 @@ export default function OrganizationProfile() {
           setContactNumber(userData.contactNumber);
           setRole(userData.role);
           setUsername(userData.username);
-          setPassword(userData.password); // Optional: Set this only if required
+          setPassword(userData.password);
         }
       } catch (error) {
         console.error("Error fetching user data:", error);
@@ -59,6 +65,31 @@ export default function OrganizationProfile() {
 
     fetchUserData();
   }, []);
+
+  const getUserFromAccessToken = async (accessToken: string | null) => {
+    try {
+        const response = await fetch("http://localhost:9091/api/getUserDataFromAccessToken", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({ accessToken: accessToken })
+        });
+
+        if (response.ok) {
+            const result = await response.json();
+            console.log("Result user: ",result);
+            setProfileImage(result.profilePicture); 
+            return result;
+        } else {
+            console.error("Failed to retrieve user data:", response.statusText);
+            return null;
+        }
+    } catch (error) {
+        console.error("Error during request:", error);
+        return null;
+    }
+};
 
   const handleImageUpload = (event: { target: { files: any[] } }) => {
     const file = event.target.files[0]

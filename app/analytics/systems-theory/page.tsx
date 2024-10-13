@@ -13,11 +13,11 @@ import axios from 'axios';
 export default function StakeholderAnalytics() {
   const [activeTab, setActiveTab] = useState('sim')
   const [stakeholders, setStakeholders] = useState([
-    { name: "Stakeholder A", connectionStrength: 0.8, influence: 0.6 },
-    { name: "Stakeholder B", connectionStrength: 0.7, influence: 0.5 },
-    { name: "Stakeholder C", connectionStrength: 0.6, influence: 0.4 }
+    { name: "Stakeholder A", connectionStrength: 0.0, influence: 0.0 },
+    { name: "Stakeholder B", connectionStrength: 0.0, influence: 0.0 },
+    { name: "Stakeholder C", connectionStrength: 0.0, influence: 0.0 }
   ])
-  const [deltaBehavior, setDeltaBehavior] = useState([0.2, -0.1, 0.3])
+  const [deltaBehavior, setDeltaBehavior] = useState([0.0, 0.0, 0.0])
   const [simResult, setSimResult] = useState("")
   const [dsiResult, setDsiResult] = useState("")
   const [sisResult, setSisResult] = useState("")

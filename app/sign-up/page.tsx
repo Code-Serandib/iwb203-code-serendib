@@ -33,7 +33,7 @@ export default function SignUp() {
   }
 
   async function handleOAuthLogin(provider: string) {
-    window.location.href = "http://localhost:9091/auth/googleLogin";
+    window.location.href = "http://localhost:9091/api/googleLogin";
   }
 
   const goToNextStep = () => setStep(step + 1)
