@@ -69,11 +69,67 @@ export default function EnhancedSurveyManagement() {
   const [sharingStakeholderTypes, setSharingStakeholderTypes] = useState([])
   const [notification, setNotification] = useState({ show: false, message: '' })
 
-
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
   const stakeholderTypes = [...new Set(stakeholders.map(s => s.stakeholderType))]
+
+  const userEmail = "a1@gmail.com"; // Replace with actual user email
+  // const [filteredStakeholders, setFilteredStakeholders] = useState<any[]>([]);
+
+  useEffect(() => {
+    // Fetch stakeholders from the API using Axios
+    async function fetchStakeholders() {
+        try {
+            const response = await axios.get("http://localhost:9091/api/getAllStakeholder", {
+                params: { user_email: userEmail },
+            });
+
+             // Map the response to rename properties
+             const renamedStakeholders = response.data.map((stakeholder: any) => ({
+              id: stakeholder.id,
+              stakeholderName: stakeholder.stakeholder_name, // Renaming here
+              stakeholderType: stakeholder.stakeholder_type, // Renaming here
+              description: stakeholder.description,
+              emailAddress: stakeholder.email_address, // Renaming here
+          }));
+            setStakeholders(renamedStakeholders);
+            // setFilteredStakeholders(response.data);
+
+        } catch (error) {
+            console.error("Error fetching stakeholders:", error);
+            showNotification("Error loading stakeholders. Please try again.");
+        } 
+    }
+    fetchStakeholders();
+}, [userEmail]);
+
+  // Define the TransformedResponse type for TypeScript
+interface TransformedResponse {
+  id: number;
+  stakeholderId: number;
+  surveyId: number;
+  questionId: number;
+  responseText: string;
+}
+
+// Function to fetch responses (moved outside of useEffect for reuse)
+const fetchResponses = async () => {
+  try {
+      // const response = await axios.get<TransformedResponse[]>('http://localhost:9091/api/allResponses');
+      const response = await axios.get('http://localhost:9091/api/allResponses');
+      setResponses(response.data); // Set the responses with the fetched data
+  } catch (error) {
+      console.error('Error fetching responses:', error);
+      showNotification("Error loading responses. Please try again.");
+  }
+};
+
+// Example useEffect where you want to call fetchResponses
+useEffect(() => {
+  fetchResponses();  // Fetch responses when the component loads
+}, []);
+
 
   // Fetch all surveys when the page loads
   useEffect(() => {
@@ -90,19 +146,6 @@ export default function EnhancedSurveyManagement() {
     fetchSurveys();
   }, []);
 
-  // useEffect(() => {
-  //   const fetchQuestions = async () => {
-  //     try {
-  //       const response = await axios.get('http://localhost:9091/api/allQuestion');
-  //       setQuestions(response.data); // Set the questions with the fetched data
-  //     } catch (error) {
-  //       console.error('Error fetching questions:', error);
-  //       showNotification("Error loading questions. Please try again.");
-  //     }
-  //   };
-  
-  //   fetchQuestions();
-  // }, []);
 
   // Function to fetch questions (moved outside of useEffect for reuse)
 const fetchQuestions = async () => {
