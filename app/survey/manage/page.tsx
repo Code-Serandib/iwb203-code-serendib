@@ -52,7 +52,7 @@ const initialStakeholders = [
 
 export default function EnhancedSurveyManagement() {
 
-  const userEmail = localStorage.getItem(email); // Replace with actual user email
+  const userEmail = localStorage.getItem('email'); // Replace with actual user email
 
   const [surveys, setSurveys] = useState(initialSurveys)
   const [questions, setQuestions] = useState(initialQuestions)
