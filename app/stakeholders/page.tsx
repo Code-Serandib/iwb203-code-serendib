@@ -64,7 +64,7 @@ export default function StakeholderRegistration() {
     const fetchUserEmail = async () => {
       try {
         // setUserEmail(response.data.user_email);
-        setUserEmail(localStorage.getItem(email)+"");
+        setUserEmail(localStorage.getItem('email')+"");
         // alert("abc");
         // alert(userEmail);
       } catch (error) {
