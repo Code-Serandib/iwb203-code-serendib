@@ -51,6 +51,9 @@ const initialStakeholders = [
 
 
 export default function EnhancedSurveyManagement() {
+
+  const userEmail = localStorage.getItem(email); // Replace with actual user email
+
   const [surveys, setSurveys] = useState(initialSurveys)
   const [questions, setQuestions] = useState(initialQuestions)
   const [responses, setResponses] = useState(initialResponses)
@@ -58,7 +61,7 @@ export default function EnhancedSurveyManagement() {
   const [stakeholders, setStakeholders] = useState(initialStakeholders)
   const [editingSurvey, setEditingSurvey] = useState(null)
   const [editingQuestion, setEditingQuestion] = useState(null)
-  const [newSurvey, setNewSurvey] = useState({ title: '', description: '' })
+  const [newSurvey, setNewSurvey] = useState({ title: '', description: '', user_email: userEmail})
   const [newQuestion, setNewQuestion] = useState({ surveyId: null, questionText: '', questionType: '', choices: [] })
   const [showSurveyDialog, setShowSurveyDialog] = useState(false)
   const [showQuestionDialog, setShowQuestionDialog] = useState(false)
@@ -74,8 +77,34 @@ export default function EnhancedSurveyManagement() {
 
   const stakeholderTypes = [...new Set(stakeholders.map(s => s.stakeholderType))]
 
-  const userEmail = "a1@gmail.com"; // Replace with actual user email
+  
   // const [filteredStakeholders, setFilteredStakeholders] = useState<any[]>([]);
+
+  interface TransformedSubmission {
+    id: number;
+    stakeholderId: number;
+    surveyId: number;
+    stakeholderName: string;
+    surveyTitle: string;
+    submittedAt: string;
+}
+
+  // Fetch all Submissions when the page loads
+  useEffect(() => {
+    // Function to fetch submissions from the backend
+    const fetchSubmissions = async () => {
+      try {
+          const response = await axios.get<TransformedSubmission[]>('http://localhost:9091/api/allSubmissions');
+          setSubmissions(response.data); // Set the submissions with the fetched data
+      } catch (error) {
+          console.error('Error fetching submissions:', error);
+          showNotification("Error loading submissions. Please try again.");
+      }
+  };
+
+    fetchSubmissions();
+  }, []);
+
 
   useEffect(() => {
     // Fetch stakeholders from the API using Axios
@@ -89,7 +118,7 @@ export default function EnhancedSurveyManagement() {
              const renamedStakeholders = response.data.map((stakeholder: any) => ({
               id: stakeholder.id,
               stakeholderName: stakeholder.stakeholder_name, // Renaming here
-              stakeholderType: stakeholder.stakeholder_type, // Renaming here
+              stakeholderType: stakeholder.type_name, // Renaming here
               description: stakeholder.description,
               emailAddress: stakeholder.email_address, // Renaming here
           }));
@@ -116,8 +145,8 @@ interface TransformedResponse {
 // Function to fetch responses (moved outside of useEffect for reuse)
 const fetchResponses = async () => {
   try {
-      // const response = await axios.get<TransformedResponse[]>('http://localhost:9091/api/allResponses');
-      const response = await axios.get('http://localhost:9091/api/allResponses');
+      const response = await axios.get<TransformedResponse[]>('http://localhost:9091/api/allResponses');
+      // const response = await axios.get('http://localhost:9091/api/allResponses');
       setResponses(response.data); // Set the responses with the fetched data
   } catch (error) {
       console.error('Error fetching responses:', error);
@@ -135,7 +164,7 @@ useEffect(() => {
   useEffect(() => {
     const fetchSurveys = async () => {
       try {
-        const response = await axios.get('http://localhost:9091/api/allSurveys');
+        const response = await axios.get(`http://localhost:9091/api/allSurveys?user_email=${userEmail}`);
         setSurveys(response.data); // Set the surveys with the fetched data
       } catch (error) {
         console.error('Error fetching surveys:', error);
@@ -150,7 +179,7 @@ useEffect(() => {
   // Function to fetch questions (moved outside of useEffect for reuse)
 const fetchQuestions = async () => {
     try {
-        const response = await axios.get('http://localhost:9091/api/allQuestion');
+        const response = await axios.get(`http://localhost:9091/api/allQuestion?user_email=${userEmail}`);
         setQuestions(response.data); // Set the questions with the fetched data
     } catch (error) {
         console.error('Error fetching questions:', error);
@@ -172,6 +201,8 @@ useEffect(() => {
       return;
     }
 
+    // setNewSurvey({ title: newSurvey.title, description: newSurvey.description, user_email:userEmail });
+
     try {
       // Make a POST request to create the survey
       const response = await axios.post('http://localhost:9091/api/newSurvey', newSurvey);
@@ -179,7 +210,7 @@ useEffect(() => {
       if (response.data.statusCode == 200) {
         const createdSurvey = { id: Date.now(), ...newSurvey };
         setSurveys([...surveys, createdSurvey]);
-        setNewSurvey({ title: '', description: '' });
+        setNewSurvey({ title: '', description: '',user_email:userEmail });
         setShowSurveyDialog(false);
         showNotification("Survey created successfully");
       }
@@ -272,6 +303,7 @@ useEffect(() => {
         setQuestions([...questions, response.data]);  // Assuming response contains the newly created question
         setNewQuestion({ surveyId: null, questionText: '', questionType: '', choices: [] });
         setShowQuestionDialog(false);
+        fetchQuestions();
         showNotification("Question added successfully");
     } catch (error) {
         console.error('Error adding question:', error);
@@ -347,7 +379,7 @@ const handleUpdateQuestion = async () => {
       setQuestions(questions.filter(q => q.id !== id));
       setResponses(responses.filter(r => r.questionId !== id));
       
-      showNotification("Question and its choices deleted successfully (status set to 0).");
+      showNotification("Question and its choices deleted successfully.");
     } catch (error) {
       console.error('Error deleting question:', error);
       showNotification("Error deleting question. Please try again.");

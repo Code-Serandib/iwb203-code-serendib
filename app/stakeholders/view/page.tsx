@@ -14,7 +14,7 @@ export default function ViewStakeholders() {
     const [selectedType, setSelectedType] = useState<string>("");
     const [emailQuery, setEmailQuery] = useState<string>("");
     const [isLoading, setIsLoading] = useState(true);
-    const userEmail = "a@gmail.com"; // Replace with actual user email
+    const userEmail = localStorage.getItem(email); // Replace with actual user email
 
     useEffect(() => {
         // Fetch stakeholders from the API using Axios
