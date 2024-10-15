@@ -1,5 +1,5 @@
 ### post for calculate SIM
-POST http://localhost:9090/stakeholder-modelling/calculate_sim
+POST http://localhost:9090/stakeholder-analytics/calculate_sim
 content-type: application/json
 
 {
@@ -76,21 +76,13 @@ content-type: application/json
 #     "values": [8, 6, 2, 4, 1, 7, 3, 9]
 # }
 
-### social exchange
-POST http://localhost:9090/stakeholder-analytics/relationshipValue
-content-type: application/json
 
-{
-    "stakeholders": [
-        {"name": "Stakeholder A", "connectionStrength": 0.8, "influence": 0.6},
-        {"name": "Stakeholder B", "connectionStrength": 0.5, "influence": 0.9},
-        {"name": "Stakeholder C", "connectionStrength": 0.7, "influence": 0.4}
-    ],
-    "deltaBehavior": [0.2, -0.1, 0.3]
-}
+
+
+
 
 ### Post request for calculating SNS
-POST http://localhost:9090/stakeholder-modelling/calculate_sns
+POST http://localhost:9090/stakeholder-analytics/calculate_sns
 content-type: application/json
 
 {
@@ -103,7 +95,7 @@ content-type: application/json
 }
 
 ### Post request for calculating SIS
-POST http://localhost:9090/stakeholder-modelling/calculate_sis
+POST http://localhost:9090/stakeholder-analytics/calculate_sis
 content-type: application/json
 
 {
