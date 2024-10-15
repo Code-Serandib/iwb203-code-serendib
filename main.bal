@@ -1,91 +1,11 @@
 import ballerina/http;
 import ballerina/data.jsondata;
-import ballerina/log;
-import ballerina/sql;
-import ballerinax/java.jdbc;
-import ballerinax/mysql.driver as _;
 import stakeholder_management_api.engagement_metrics;
 import stakeholder_management_api.relation_depth_analysis;
 import stakeholder_management_api.risk_modeling;
 import stakeholder_management_api.stakeholder_equilibrium;
 
 service /stakeholder\-analytics on new http:Listener(9090) {
-    final sql:Client dbClient;
-
-    function init() returns error? {
-        self.dbClient = check new jdbc:Client(jdbcUrl);
-        check initDatabase(self.dbClient);
-    }
-
-    // Function to check if the provided API key is valid
-    function isValidApiKey(string apiKey) returns boolean {
-        stream<record {}, sql:Error?> resultStream = self.dbClient->query(ifUserExistByAPIKey(apiKey));
-        do {
-            record {}? existingUser = check resultStream.next();
-
-            if existingUser is record {} {
-                return true;
-            }
-        } on fail var e {
-            log:printError("Checking user exist fail: " + e.toBalString());
-        }
-        return false;
-    }
-
-    resource function post register(http:Caller caller, APIReg apireg) returns error? {
-        // Check if user already exists in the database
-        stream<record {}, sql:Error?> resultStream = self.dbClient->query(ifKeyNameExist(apireg.keyName));
-        record {}? existingKeyName = check resultStream.next();
-
-        if existingKeyName is record {} {
-            check caller->respond("Key name already exist");
-            log:printError("Duplicate key name: " + apireg.keyName);
-            return;
-        }
-
-        string apiKey = generateApiKey();
-        sql:ExecutionResult _ = check self.dbClient->execute(insertUserApi(apireg, apiKey));
-
-        json response = {apiKey: apiKey};
-        check caller->respond(response);
-
-        log:printInfo("New user registered: " + apireg.username);
-    }
-
-    resource function get data(http:Caller caller, http:Request req) returns error? {
-        string|error apiKey = req.getHeader("x-api-key");
-        if (apiKey is error || !self.isValidApiKey(apiKey)) {
-            // Create a response object with a 401 Unauthorized status code
-            log:printError("Check authorize fail: "+check apiKey);
-            http:Response unauthorizedResponse = new;
-            unauthorizedResponse.statusCode = http:STATUS_UNAUTHORIZED;
-            unauthorizedResponse.setPayload("Unauthorized");
-            check caller->respond(unauthorizedResponse);
-            return;
-        }
-
-        json data = {message: "This is protected data!"};
-        check caller->respond(data);
-    }
-
-    resource function put rotateKey(http:Caller caller, http:Request req) returns error? {
-        string|error apiKey = req.getHeader("x-api-key");
-        if (apiKey is error || !self.isValidApiKey(apiKey)) {
-            http:Response unauthorizedResponse = new;
-            unauthorizedResponse.statusCode = http:STATUS_UNAUTHORIZED;
-            unauthorizedResponse.setPayload("Unauthorized");
-            check caller->respond(unauthorizedResponse);
-            return;
-        }
-
-        string newApiKey = generateApiKey();
-        sql:ExecutionResult _ = check self.dbClient->execute(updateAPIKey(apiKey, newApiKey));
-
-        json response = {apiKey: newApiKey};
-        check caller->respond(response);
-    }
-
-    
 
     //engagement-metrics functions start
     //*****************************************//
@@ -188,11 +108,9 @@ service /stakeholder\-analytics on new http:Listener(9090) {
         relation_depth_analysis:StakeholderRelation relation = check 
         inputJson.cloneWithType(relation_depth_analysis:StakeholderRelation);
 
-        // Call the relationshipValueCal function and handle errors
         relation_depth_analysis:RelationResult|error result = relation_depth_analysis:relationshipValueCal(relation);
 
         if (result is error) {
-            // Handle the error case and respond with a meaningful message
             json errorResponse = {
                 "status": "error",
                 "message": "Invalid input values",
@@ -204,7 +122,6 @@ service /stakeholder\-analytics on new http:Listener(9090) {
             };
             check caller->respond(errorResponse);
         } else {
-            // Handle the success case and respond with the result
             check caller->respond(result.toJson());
         }
     }
@@ -288,17 +205,10 @@ service /stakeholder\-analytics on new http:Listener(9090) {
     resource function post calculate_sim(http:Caller caller, http:Request req) returns error? {
         json payload = check req.getJsonPayload();
 
-        // Ensure the 'stakeholders' field is present and is of type json
         json stakeholdersJson = check payload.stakeholders;
-
-        // Parse the 'stakeholders' field in the JSON payload
         stakeholder_equilibrium:Stakeholder[] stakeholders = check jsondata:parseAsType(stakeholdersJson);
-
-        // float[][] SIM = stakeholder_equilibrium:buildStakeholderInfluenceMatrix(stakeholders);
         json detailedSIM = stakeholder_equilibrium:buildStakeholderInfluenceMatrixDetailed(stakeholders);
 
-        // json response = { "Stakeholder Influence Matrix (SIM)": SIM };
-        // check caller->respond(response);
         check caller->respond(detailedSIM);
     }
 
@@ -307,14 +217,6 @@ service /stakeholder\-analytics on new http:Listener(9090) {
         json payload = check req.getJsonPayload();
         stakeholder_equilibrium:Stakeholder[] stakeholders = check jsondata:parseAsType(check payload.stakeholders);
         float[] deltaBehavior = check jsondata:parseAsType(check payload.deltaBehavior);
-
-        // float[] DSI = stakeholder_equilibrium:calculateDynamicStakeholderImpact(stakeholders, deltaBehavior);
-
-        // json response = {
-        //     "Dynamic Stakeholder Impact (DSI)": DSI
-        // };
-
-        // check caller->respond(response);
 
         json detailedDSI = stakeholder_equilibrium:calculateDynamicStakeholderImpactDetailed(stakeholders, deltaBehavior);
 
@@ -327,14 +229,6 @@ service /stakeholder\-analytics on new http:Listener(9090) {
         stakeholder_equilibrium:Stakeholder[] stakeholders = check jsondata:parseAsType(check payload.stakeholders);
         float[] deltaBehavior = check jsondata:parseAsType(check payload.deltaBehavior);
 
-        // float SNS = stakeholder_equilibrium:calculateStakeholderNetworkStability(stakeholders, deltaBehavior);
-
-        // json response = {
-        //     "Stakeholder Network Stability (SNS)": SNS
-        // };
-
-        // check caller->respond(response);
-
         json detailedSNS = stakeholder_equilibrium:calculateStakeholderNetworkStabilityDetailed(stakeholders, deltaBehavior);
 
         check caller->respond(detailedSNS);
@@ -344,20 +238,9 @@ service /stakeholder\-analytics on new http:Listener(9090) {
     resource function post calculate_sis(http:Caller caller, http:Request req) returns error? {
         json payload = check req.getJsonPayload();
 
-        // Ensure the 'stakeholders' field is present and is of type json
         json stakeholdersJson = check payload.stakeholders;
 
-        // Parse the 'stakeholders' field in the JSON payload
         stakeholder_equilibrium:Stakeholder[] stakeholders = check jsondata:parseAsType(stakeholdersJson);
-
-        // float[] SIS = stakeholder_equilibrium:calculateSystemicInfluenceScore(stakeholders);
-
-        // json response = {
-        //     "Systemic Influence Score (SIS)": SIS
-        // };
-
-        // check caller->respond(response); //end
-
         json detailedSIS = stakeholder_equilibrium:calculateSystemicInfluenceScoreDetailed(stakeholders);
 
         check caller->respond(detailedSIS);
