@@ -11,6 +11,19 @@ import { Checkbox } from "@/components/ui/checkbox"
 import { Textarea } from "@/components/ui/textarea"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 
+// Mock data (replace with actual API calls in a real application)
+const mockSurveys = [
+  { id: 0, title: "", description: "" },
+]
+
+const mockQuestions = [
+  { id: 0, surveyId: 0, questionText: "", questionType: "" },
+]
+
+const mockChoices = [
+  { id: 0, questionId: 0, choiceText: "" },
+]
+
 export default function SurveyPage() {
   const searchParams = useSearchParams()
   const [surveys, setSurveys] = useState([])
