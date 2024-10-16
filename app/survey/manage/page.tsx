@@ -363,13 +363,6 @@ const handleUpdateQuestion = async () => {
 
 
 
-
-  // const handleDeleteQuestion = (id) => {
-  //   setQuestions(questions.filter(q => q.id !== id))
-  //   setResponses(responses.filter(r => r.questionId !== id))
-  //   showNotification("Question deleted successfully")
-  // }
-
   const handleDeleteQuestion = async (id) => {
     try {
       // Send PUT request to update the question and its choices' status to 0 (soft delete)
@@ -393,15 +386,36 @@ const handleUpdateQuestion = async () => {
     setSharingStakeholderTypes([])
   }
 
-  const handleSendSurvey = () => {
-    const selectedStakeholders = stakeholders.filter(s => sharingStakeholderTypes.includes(s.stakeholderType))
-    // In a real application, you would send emails to the selected stakeholders here
-    console.log(`Sharing survey "${selectedSurvey.title}" with:`, selectedStakeholders)
-    showNotification(`Survey "${selectedSurvey.title}" has been shared with ${selectedStakeholders.length} stakeholders.`)
-    setShowShareDialog(false)
-    setSelectedSurvey(null)
-    setSharingStakeholderTypes([])
-  }
+  const handleSendSurvey = async () => {
+    // Filter stakeholders based on selected stakeholder types
+    const selectedStakeholders = stakeholders.filter(s => sharingStakeholderTypes.includes(s.stakeholderType));
+    
+    // Prepare the payload to send to the backend
+    const payload = {
+        surveyId: selectedSurvey.id,
+        surveyTitle: selectedSurvey.title,
+        selectedTypes: sharingStakeholderTypes,
+        user_email : userEmail,
+    };
+
+    try {
+        // Send a POST request to the backend using Axios
+        const response = await axios.post('http://localhost:9091/api/share', payload);
+        // Handle success response
+        console.log(response.data.message);
+        showNotification(response.data.message);
+    } catch (error) {
+        // Handle error response
+        console.error("Error sharing survey: ", error);
+        showNotification("Error sharing survey.");
+    }
+
+    // Reset state after sharing
+    setShowShareDialog(false);
+    setSelectedSurvey(null);
+    setSharingStakeholderTypes([]);
+};
+
 
   const showNotification = (message: string) => {
     setNotification({ show: true, message })

@@ -12,23 +12,15 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 
 // Mock data (replace with actual API calls in a real application)
 const mockSurveys = [
-  { id: 1, title: "Customer Satisfaction Survey", description: "We would like to know your feedback on our services." },
-  { id: 2, title: "Product Feedback Survey", description: "Please provide your thoughts on our latest product." },
+  { id: 0, title: "", description: "" },
 ]
 
 const mockQuestions = [
-  { id: 1, surveyId: 1, questionText: "How satisfied are you with our service?", questionType: "rating" },
-  { id: 2, surveyId: 1, questionText: "What can we do to improve?", questionType: "text" },
-  { id: 3, surveyId: 2, questionText: "How likely are you to recommend our product?", questionType: "rating" },
-  { id: 4, surveyId: 2, questionText: "Which features did you like the most?", questionType: "multiple_choice" },
-  { id: 5, surveyId: 2, questionText: "Any additional comments?", questionType: "text" },
+  { id: 0, surveyId: 0, questionText: "", questionType: "" },
 ]
 
 const mockChoices = [
-  { id: 1, questionId: 4, choiceText: "Ease of use" },
-  { id: 2, questionId: 4, choiceText: "Design" },
-  { id: 3, questionId: 4, choiceText: "Performance" },
-  { id: 4, questionId: 4, choiceText: "Customer support" },
+  { id: 0, questionId: 0, choiceText: "" },
 ]
 
 export default function SurveyPage() {
