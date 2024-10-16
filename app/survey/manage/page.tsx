@@ -14,6 +14,12 @@ import { Checkbox } from "@/components/ui/checkbox"
 import { Plus, Edit, Trash, Eye, Search, Share2 } from 'lucide-react'
 import Layout from '@/components/layout/Layout';
 import axios from 'axios';
+import { Bar } from 'react-chartjs-2'
+import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend } from 'chart.js'
+import { BarChartIcon } from '@radix-ui/react-icons'
+
+ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend)
+
 
 // Mock data (replace with actual API calls in a real application)
 const initialSurveys = [
@@ -41,6 +47,9 @@ const initialSubmissions = [
   { id: 1, stakeholderId: 1, surveyId: 1, submittedAt: "2024-09-28 10:30:00" },
   { id: 2, stakeholderId: 2, surveyId: 2, submittedAt: "2024-09-28 11:00:00" },
 ]
+const initialSubmissionsBySurveyId = [
+  { count: 1, submittedAt: "2024-09-28 10" },
+]
 
 const initialStakeholders = [
   { id: 1, stakeholderName: "John", stakeholderType: "Buyer", description: "Regular customer", emailAddress: "john@example.com" },
@@ -58,6 +67,7 @@ export default function EnhancedSurveyManagement() {
   const [questions, setQuestions] = useState(initialQuestions)
   const [responses, setResponses] = useState(initialResponses)
   const [submissions, setSubmissions] = useState(initialSubmissions)
+  const [submissionsBySurveyId, setSubmissionsBySurveyId] = useState(initialSubmissionsBySurveyId)
   const [stakeholders, setStakeholders] = useState(initialStakeholders)
   const [editingSurvey, setEditingSurvey] = useState(null)
   const [editingQuestion, setEditingQuestion] = useState(null)
@@ -79,6 +89,40 @@ export default function EnhancedSurveyManagement() {
 
   
   // const [filteredStakeholders, setFilteredStakeholders] = useState<any[]>([]);
+
+  const [showChartDialog, setShowChartDialog] = useState(false)
+  const [chartData, setChartData] = useState(null)
+
+  const handleShowChart = async (surveyId) => {
+    try {
+      // In a real application, you would fetch this data from your API
+      const response = await axios.get(`http://localhost:9091/api/allSubmissionsBySurveyId?surveyId=${surveyId}`)
+      const data = response.data
+
+      setSubmissionsBySurveyId(response.data)
+
+      // Extract `submitted_at` and `count` values to use in chart
+    const labels = data.map(submissionsBySurveyId => submissionsBySurveyId.submitted_at) // Dates
+    const counts = data.map(submissionsBySurveyId => submissionsBySurveyId.count) // Counts
+
+      console.log(labels+"sub");
+      console.log(counts+"cout");
+
+      setChartData({
+        labels: labels,
+        datasets: [{
+          label: 'Number of Submisions from stakeholders',
+          data: counts,
+          backgroundColor: 'rgba(54, 162, 235, 0.5)',
+        }]
+      })
+      setShowChartDialog(true)
+    } catch (error) {
+      console.error('Error fetching chart data:', error)
+      showNotification("Error loading chart data. Please try again.")
+    }
+  }
+
 
   interface TransformedSubmission {
     id: number;
@@ -489,29 +533,32 @@ const handleUpdateQuestion = async () => {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {surveys.map((survey) => (
-                <Card key={survey.id}>
-                  <CardHeader>
-                    <CardTitle>{survey.title}</CardTitle>
-                    <CardDescription>{survey.description}</CardDescription>
-                  </CardHeader>
-                  <CardFooter className="flex justify-between">
-                    <Button variant="outline" onClick={() => setEditingSurvey(survey)}>
-                      <Edit className="mr-2 h-4 w-4" /> Edit
-                    </Button>
-                    <Button variant="outline" onClick={() => handleViewDetails(survey)}>
-                      <Eye className="mr-2 h-4 w-4" /> View Details
-                    </Button>
-                    <Button variant="outline" onClick={() => handleShareSurvey(survey)}>
-                      <Share2 className="mr-2 h-4 w-4" /> Share
-                    </Button>
-                    <Button variant="destructive" onClick={() => handleDeleteSurvey(survey.id)}>
-                      <Trash className="mr-2 h-4 w-4" /> Delete
-                    </Button>
-                  </CardFooter>
-                </Card>
-              ))}
-            </div>
+    {surveys.map((survey) => (
+      <Card key={survey.id}>
+        <CardHeader>
+          <CardTitle>{survey.title}</CardTitle>
+          <CardDescription>{survey.description}</CardDescription>
+        </CardHeader>
+        <CardFooter className="flex justify-between">
+          <Button variant="outline" onClick={() => setEditingSurvey(survey)}>
+            <Edit className="mr-2 h-4 w-4" /> Edit
+          </Button>
+          <Button variant="outline" onClick={() => handleViewDetails(survey)}>
+            <Eye className="mr-2 h-4 w-4" /> View Details
+          </Button>
+          <Button variant="outline" onClick={() => handleShareSurvey(survey)}>
+            <Share2 className="mr-2 h-4 w-4" /> Share
+          </Button>
+          <Button variant="outline" onClick={() => handleShowChart(survey.id)}>
+            <BarChartIcon className="mr-2 h-4 w-4" /> Chart
+          </Button>
+          <Button variant="destructive" onClick={() => handleDeleteSurvey(survey.id)}>
+            <Trash className="mr-2 h-4 w-4" /> Delete
+          </Button>
+        </CardFooter>
+      </Card>
+    ))}
+  </div>
 
             {editingSurvey && (
               <Dialog open={!!editingSurvey} onOpenChange={() => setEditingSurvey(null)}>
@@ -614,6 +661,33 @@ const handleUpdateQuestion = async () => {
                 </DialogFooter>
               </DialogContent>
             </Dialog>
+
+            <Dialog open={showChartDialog} onOpenChange={setShowChartDialog}>
+    <DialogContent className="sm:max-w-[600px]">
+      <DialogHeader>
+        <DialogTitle>Survey Results Chart</DialogTitle>
+      </DialogHeader>
+      <div className="py-4">
+        {chartData && (
+          <Bar
+            data={chartData}
+            options={{
+              responsive: true,
+              plugins: {
+                legend: {
+                  position: 'top' as const,
+                },
+                title: {
+                  display: true,
+                  text: 'Survey Responses',
+                },
+              },
+            }}
+          />
+        )}
+      </div>
+    </DialogContent>
+  </Dialog>
           </TabsContent>
 
           <TabsContent value="questions">
