@@ -1,9 +1,10 @@
 "use client"
 
 import { useState, useEffect } from 'react'
+import { useSearchParams } from 'next/navigation'
+import axios from 'axios'
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { Checkbox } from "@/components/ui/checkbox"
@@ -24,42 +25,102 @@ const mockChoices = [
 ]
 
 export default function SurveyPage() {
+  const searchParams = useSearchParams()
+  const [surveys, setSurveys] = useState([])
+  const [questions, setQuestions] = useState([])
   const [selectedSurvey, setSelectedSurvey] = useState(null)
+  const [userEmail, setUserEmail] = useState('')
+  const [stakeholderEmail, setStakeholderEmail] = useState('')
+  const [isLoading, setIsLoading] = useState(true)
+  const [error, setError] = useState(null)
   const [responses, setResponses] = useState({})
+  const [submitted, setSubmitted] = useState(false)
 
-  const handleSurveySelect = (surveyId) => {
-    setSelectedSurvey(surveyId)
-    setResponses({})
+  useEffect(() => {
+    const surveyId = searchParams.get('surveyid');
+    const stakeholderemail = searchParams.get('stakeholderemail');
+
+    if (!surveyId || !stakeholderemail) {
+      setError("Missing survey ID or stakeholder email.")
+      setIsLoading(false)
+      return;
+    }
+
+    const validateSurvey = async () => {
+      try {
+        const response = await axios.get(`http://localhost:9091/api/checkStakeholder`, {
+          params: { stakeholderemail, surveyid: surveyId },
+        })
+
+        if (response.status === 200 && response.data.message === "Valid stakeholder and survey") {
+          setUserEmail(response.data.email);
+          setStakeholderEmail(stakeholderemail);
+          setSelectedSurvey(Number(surveyId));
+
+          // Fetch surveys
+          const surveysResponse = await axios.get(`http://localhost:9091/api/allSurveys`, { params: { user_email: response.data.email } });
+          setSurveys(surveysResponse.data);
+
+          // Fetch questions
+          const questionsResponse = await axios.get(`http://localhost:9091/api/allQuestion`, { params: { user_email: response.data.email } });
+          setQuestions(questionsResponse.data);
+        } else {
+          setError(response.data.message || "Invalid survey or stakeholder.")
+        }
+      } catch (err) {
+        setError("Failed to validate the survey or fetch data. Please try again later.")
+      } finally {
+        setIsLoading(false)
+      }
+    }
+
+    validateSurvey();
+  }, [searchParams])
+
+  const handleResponseChange = (questionId, value, isCheckbox = false) => {
+    setResponses(prev => {
+      if (isCheckbox) {
+        const currentValues = prev[questionId] || []
+        const updatedValues = currentValues.includes(value)
+          ? currentValues.filter(v => v !== value)
+          : [...currentValues, value]
+        return { ...prev, [questionId]: updatedValues }
+      }
+      return { ...prev, [questionId]: value }
+    })
   }
 
-  const handleResponseChange = (questionId, value) => {
-    setResponses(prev => ({ ...prev, [questionId]: value }))
-  }
-
-  const handleSubmit = () => {
-    console.log("Submitting responses:", responses)
-    // Here you would typically send the responses to your backend
-    alert("Survey submitted successfully!")
-    setSelectedSurvey(null)
-    setResponses({})
+  const handleSubmit = async () => {
+    try {
+      await axios.post('http://localhost:9091/api/submitSurvey', {
+        stakeholderEmail: stakeholderEmail,
+        surveyId: selectedSurvey,
+        responses
+      });
+      setSubmitted(true);
+    } catch (error) {
+      setError("Failed to submit the survey. Please try again later.");
+    }
   }
 
   const renderQuestion = (question) => {
     switch (question.questionType) {
       case 'rating':
-        return (
-          <RadioGroup
-            onValueChange={(value) => handleResponseChange(question.id, value)}
-            className="flex flex-row space-x-2"
-          >
-            {[1, 2, 3, 4, 5].map((value) => (
-              <div key={value} className="flex items-center space-x-2">
-                <RadioGroupItem value={value.toString()} id={`rating-${question.id}-${value}`} />
-                <Label htmlFor={`rating-${question.id}-${value}`}>{value}</Label>
-              </div>
-            ))}
-          </RadioGroup>
-        )
+      const [min, max] = question.choices.map(Number).sort((a, b) => a - b);
+      const range = Array.from({ length: max - min + 1 }, (_, i) => i + min);
+      return (
+        <RadioGroup
+          onValueChange={(value) => handleResponseChange(question.id, value)}
+          className="flex flex-row space-x-2"
+        >
+          {range.map((value) => (
+            <div key={value} className="flex items-center space-x-2">
+              <RadioGroupItem value={value.toString()} id={`rating-${question.id}-${value}`} />
+              <Label htmlFor={`rating-${question.id}-${value}`}>{value}</Label>
+            </div>
+          ))}
+        </RadioGroup>
+      )
       case 'text':
         return (
           <Textarea
@@ -67,17 +128,32 @@ export default function SurveyPage() {
             placeholder="Type your answer here..."
           />
         )
+      case 'checkbox':
+        return (
+          <div className="space-y-2">
+            {question.choices.map((choice) => (
+              <div key={choice} className="flex items-center space-x-2">
+                <Checkbox
+                  id={`checkbox-${question.id}-${choice}`}
+                  onCheckedChange={(checked) => 
+                    handleResponseChange(question.id, choice, true)
+                  }
+                />
+                <Label htmlFor={`checkbox-${question.id}-${choice}`}>{choice}</Label>
+              </div>
+            ))}
+          </div>
+        )
       case 'multiple_choice':
-        const choices = mockChoices.filter(choice => choice.questionId === question.id)
         return (
           <Select onValueChange={(value) => handleResponseChange(question.id, value)}>
             <SelectTrigger className="w-full">
               <SelectValue placeholder="Select an option" />
             </SelectTrigger>
             <SelectContent>
-              {choices.map((choice) => (
-                <SelectItem key={choice.id} value={choice.choiceText}>
-                  {choice.choiceText}
+              {question.choices.map((choice) => (
+                <SelectItem key={choice} value={choice}>
+                  {choice}
                 </SelectItem>
               ))}
             </SelectContent>
@@ -88,40 +164,46 @@ export default function SurveyPage() {
     }
   }
 
+  if (isLoading) {
+    return <div className="container mx-auto p-4">Loading survey...</div>
+  }
+
+  if (error) {
+    return <div className="container mx-auto p-4">Error: {error}</div>
+  }
+
+  const survey = surveys.find(s => s.id === selectedSurvey)
+  const surveyQuestions = questions.filter(q => q.surveyId === selectedSurvey)
+
+  if (!survey) {
+    return <div className="container mx-auto p-4">Survey not found</div>
+  }
+
   return (
     <div className="container mx-auto p-4">
-      <h1 className="text-2xl font-bold mb-4">Survey Page</h1>
-      {!selectedSurvey ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {mockSurveys.map((survey) => (
-            <Card key={survey.id}>
-              <CardHeader>
-                <CardTitle>{survey.title}</CardTitle>
-                <CardDescription>{survey.description}</CardDescription>
-              </CardHeader>
-              <CardFooter>
-                <Button onClick={() => handleSurveySelect(survey.id)}>Take Survey</Button>
-              </CardFooter>
-            </Card>
-          ))}
-        </div>
+      <h1 className="text-3xl font-bold mb-4">Survey Page</h1>
+      {submitted ? (
+        <Card>
+          <CardHeader>
+            <CardTitle>Thank You!</CardTitle>
+            <CardDescription>Your responses have been submitted successfully.</CardDescription>
+          </CardHeader>
+        </Card>
       ) : (
         <Card>
           <CardHeader>
-            <CardTitle>{mockSurveys.find(s => s.id === selectedSurvey).title}</CardTitle>
-            <CardDescription>{mockSurveys.find(s => s.id === selectedSurvey).description}</CardDescription>
+            <CardTitle>{survey.title}</CardTitle>
+            <CardDescription>{survey.description}</CardDescription>
           </CardHeader>
           <CardContent>
-            {mockQuestions
-              .filter(q => q.surveyId === selectedSurvey)
-              .map((question) => (
-                <div key={question.id} className="mb-4">
-                  <Label htmlFor={`question-${question.id}`} className="mb-2 block">
-                    {question.questionText}
-                  </Label>
-                  {renderQuestion(question)}
-                </div>
-              ))}
+            {surveyQuestions.map((question) => (
+              <div key={question.id} className="mb-4">
+                <Label htmlFor={`question-${question.id}`} className="mb-2 block">
+                  {question.questionText}
+                </Label>
+                {renderQuestion(question)}
+              </div>
+            ))}
           </CardContent>
           <CardFooter>
             <Button onClick={handleSubmit}>Submit Survey</Button>
