@@ -30,6 +30,7 @@ This Stakeholder Management System is designed to address key gaps in traditiona
 4. Add the following configurations for the Mail Service.
 
 > ```
+> [stakeholder_management_backend.survey]
 > SMTP_EMAIL="smtp.mailtrap.io"
 > SMTP_USERNAME="<username>"
 > SMTP_PASSWORD="<password>"
