@@ -84,5 +84,34 @@ This project uses a form-based approach to gather data about stakeholders' Power
 2. The score is normalized and calculated as a factor out of 10 for Power, Legitimacy, and Urgency.
 3. The three factors are then passed to a backend API that computes the overall Influence Index using custom logic.
 
+### Nash Equilibrium Calculator
 
+This project is a Nash Equilibrium Calculator designed for a stakeholder management system. It helps to compute the Nash equilibrium for a set of stakeholders with various strategies,  facilitating decision-making in strategic interactions between multiple players (stakeholders).
 
+#### Features
+
+- Support for 2 or 3 players (stakeholders).
+- Flexible input of strategic options for each player.
+- Input system for payoff matrices corresponding to player strategies.
+- Calculates the Nash Equilibrium by using an external API.
+- Displays results in an intuitive and interactive payoff matrix with Nash equilibrium points highlighted.
+
+#### Usage
+
+> Once you have the frontend running, follow these steps: 
+
+1. Enter the names of 2 or 3 players (stakeholders).
+2. Define the number of strategic options for each player.
+3. Specify the options for each player.
+4. Input the payoffs for each combination of options.
+5. Click `Calculate Nash Equilibrium` to submit the form. The system will display the Nash equilibrium points in the matrix.
+
+#### Components
+
+> The key components used in this project are: 
+
+1. Player Input: For entering the player names.
+2. Option Counts Input: Allows input of the number of strategies each player has.
+3. Options Input: For specifying strategic options.
+4. Payoffs Input: For entering payoff values for each strategy combination.
+5. NashMatrixDisplay: Displays the Nash equilibrium result in a matrix format with highlighted equilibrium points.
