@@ -403,20 +403,20 @@ This is for calculating the `Total Engagement Score (TES)` of stakeholders in a 
 
 - Surveys for evaluating key engagement factors of stakeholders.
 - Real-time calculation of the TES based on four key indicators:
-- Alpha (Weight for EPS) – Measures engagement performance.
-- Beta (Weight for BSC) – Measures the balanced scorecard index.
-- EPSi (Engagement Performance Score) – Quantifies the performance of stakeholder engagement.
-- BSCi (Balanced Scorecard Index) – Measures financial performance and internal contributions.
+   1. Alpha (Weight for EPS) – Measures engagement performance.
+   2. Beta (Weight for BSC) – Measures the balanced scorecard index.
+   3. EPSi (Engagement Performance Score) – Quantifies the performance of stakeholder engagement.
+   4. BSCi (Balanced Scorecard Index) – Measures financial performance and internal contributions.
 - User-friendly input fields with surveys for more accurate scoring.
-- Automated calculation of `TES` using the entered values.
+- Automated calculation of TES using the entered values.
 
 #### Usage
 
 1. Fill in the `Alpha`, `Beta`, `EPSi`, and `BSCi` values through the form inputs.
 2. Use the Info buttons to open survey dialogs and help you determine more accurate scores for each factor.
 3. Submit the form to calculate the `TES`. The results include:
-4. `TESi` (Total Engagement Score Index)
-5. Priority level of the stakeholder.
+   - `TESi` (Total Engagement Score Index)
+   - Priority level of the stakeholder.
 
 #### Example Surveys
 
