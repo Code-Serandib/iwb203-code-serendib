@@ -11,3 +11,26 @@ This Stakeholder Management System is designed to address key gaps in traditiona
 > ```
 > git clone https://github.com/Code-Serandib/iwb203-code-serendib.git
 > ```
+
+2. Add a new file named `Config.toml` in the `/stakeholder_management_backend` directory and add the following configurations for the MySQL server.
+
+> ```
+> DB_USERNAME="<username>"
+> DB_PASSWORD="<password>"
+> DB_URL="<databse_url>"
+> ```
+
+3. Add the following configurations for the Google Authentication.
+
+> ```
+> CLIENT_ID="<client_id>"
+> CLIENT_SECRET="<client_secret>"
+> ```
+
+4. Add the following configurations for the Mail Service.
+
+> ```
+> SMTP_EMAIL="smtp.mailtrap.io"
+> SMTP_USERNAME="<username>"
+> SMTP_PASSWORD="<password>"
+> ```
