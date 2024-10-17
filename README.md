@@ -115,3 +115,41 @@ This project is a Nash Equilibrium Calculator designed for a stakeholder managem
 3. Options Input: For specifying strategic options.
 4. Payoffs Input: For entering payoff values for each strategy combination.
 5. NashMatrixDisplay: Displays the Nash equilibrium result in a matrix format with highlighted equilibrium points.
+
+### Social Exchange Calculator
+
+It is part of a stakeholder management system designed to help organizations calculate the social exchange value of stakeholders based on the benefits they bring and the costs they  incur.
+
+#### Features
+
+- Benefit Survey: Allows you to calculate stakeholder benefits based on various factors like financial, strategic, operational, and social contributions.
+- Cost Survey: Lets you calculate stakeholder costs by assessing financial, strategic, operational, and reputational factors.
+- Relationship Value Calculation: Computes the social exchange value based on the benefit-to-cost ratio, helping you determine the value of stakeholder relationships.
+
+#### How It Works
+
+##### Benefit Survey
+
+> The Benefit Survey allows users to provide input on stakeholder contributions across different areas:
+
+1. Financial: Revenue, cost reductions, funding, etc.
+2. Strategic: Market access, knowledge sharing, brand enhancement.
+3. Operational: Efficiency improvements, skill development, service delivery.
+4. Social: Contributions to CSR, sustainability, and inclusion.
+
+> The user input is weighted and calculated to determine an overall benefit score.
+
+##### Cost Survey
+
+> The Cost Survey assesses the costs associated with a stakeholder:
+
+1. Financial: Expenditures, resource allocation.
+2. Strategic: Opportunity costs, risk management efforts.
+3. Operational: Workflow disruptions, increased logistics.
+4. Reputational: Risk of negative publicity, brand impact.
+
+> The cost inputs are weighted and processed to generate a total cost score.
+
+##### Social Exchange Calculation
+
+Once the benefit and cost values are entered or calculated through the surveys, the system submits this data to the backend API `(/api/social_exchange_cal)` to calculate the Social  Exchange Value. This value helps in determining the overall relationship value with the stakeholder, guiding future strategic decisions.
