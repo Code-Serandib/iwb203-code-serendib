@@ -34,3 +34,24 @@ This Stakeholder Management System is designed to address key gaps in traditiona
 > SMTP_USERNAME="<username>"
 > SMTP_PASSWORD="<password>"
 > ```
+
+5. Open a new terminal in the project path and run the `Metrics API`
+
+> ```
+> cd stakeholder_management_metrics_api
+> bal run
+> ```
+
+6. Open an another terminal in the project path and run the `Backend service`
+
+> ```
+> cd stakeholder_management_metrics_api
+> bal run
+> ```
+
+7. Open an another terminal in the project path and run the `React service`
+
+> ```
+> cd stakeholder-management-frontend
+> npm run dev
+> ```
