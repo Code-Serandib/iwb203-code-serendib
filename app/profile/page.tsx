@@ -30,8 +30,9 @@ export default function OrganizationProfile() {
   const [password, setPassword] = useState("");
 
   // Fetch user data on component mount
-  const googleAccessToken = localStorage.getItem("googleAccessToken");
+  
   useEffect(() => {
+    const googleAccessToken = localStorage.getItem("googleAccessToken");
     const fetchUserData = async () => {
       const storedEmail = localStorage.getItem("email");
 
@@ -79,6 +80,7 @@ export default function OrganizationProfile() {
         if (response.ok) {
             const result = await response.json();
             console.log("Result user: ",result);
+            console.log("Result user: ",result.profilePicture);
             setProfileImage(result.profilePicture); 
             return result;
         } else {
