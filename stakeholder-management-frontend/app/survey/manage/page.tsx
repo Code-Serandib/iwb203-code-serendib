@@ -71,8 +71,8 @@ export default function EnhancedSurveyManagement() {
   const [stakeholders, setStakeholders] = useState(initialStakeholders)
   const [editingSurvey, setEditingSurvey] = useState(null)
   const [editingQuestion, setEditingQuestion] = useState(null)
-  const [newSurvey, setNewSurvey] = useState({ title: '', description: '', user_email: userEmail})
-  const [newQuestion, setNewQuestion] = useState({ surveyId: null, questionText: '', questionType: '', choices: [] })
+  const [newSurvey, setNewSurvey] = useState({ title: '', description: '', user_email: userEmail })
+  const [newQuestion, setNewQuestion] = useState({ surveyId: 0, questionText: '', questionType: '', choices: [] })
   const [showSurveyDialog, setShowSurveyDialog] = useState(false)
   const [showQuestionDialog, setShowQuestionDialog] = useState(false)
   const [selectedSurvey, setSelectedSurvey] = useState(null)
@@ -87,7 +87,7 @@ export default function EnhancedSurveyManagement() {
 
   const stakeholderTypes = [...new Set(stakeholders.map(s => s.stakeholderType))]
 
-  
+
   // const [filteredStakeholders, setFilteredStakeholders] = useState<any[]>([]);
 
   const [showChartDialog, setShowChartDialog] = useState(false)
@@ -102,11 +102,11 @@ export default function EnhancedSurveyManagement() {
       setSubmissionsBySurveyId(response.data)
 
       // Extract `submitted_at` and `count` values to use in chart
-    const labels = data.map(submissionsBySurveyId => submissionsBySurveyId.submitted_at) // Dates
-    const counts = data.map(submissionsBySurveyId => submissionsBySurveyId.count) // Counts
+      const labels = data.map(submissionsBySurveyId => submissionsBySurveyId.submitted_at) // Dates
+      const counts = data.map(submissionsBySurveyId => submissionsBySurveyId.count) // Counts
 
-      console.log(labels+"sub");
-      console.log(counts+"cout");
+      console.log(labels + "sub");
+      console.log(counts + "cout");
 
       setChartData({
         labels: labels,
@@ -131,20 +131,20 @@ export default function EnhancedSurveyManagement() {
     stakeholderName: string;
     surveyTitle: string;
     submittedAt: string;
-}
+  }
 
   // Fetch all Submissions when the page loads
   useEffect(() => {
     // Function to fetch submissions from the backend
     const fetchSubmissions = async () => {
       try {
-          const response = await axios.get<TransformedSubmission[]>('http://localhost:9091/api/allSubmissions');
-          setSubmissions(response.data); // Set the submissions with the fetched data
+        const response = await axios.get<TransformedSubmission[]>('http://localhost:9091/api/allSubmissions');
+        setSubmissions(response.data); // Set the submissions with the fetched data
       } catch (error) {
-          console.error('Error fetching submissions:', error);
-          showNotification("Error loading submissions. Please try again.");
+        console.error('Error fetching submissions:', error);
+        showNotification("Error loading submissions. Please try again.");
       }
-  };
+    };
 
     fetchSubmissions();
   }, []);
@@ -153,55 +153,55 @@ export default function EnhancedSurveyManagement() {
   useEffect(() => {
     // Fetch stakeholders from the API using Axios
     async function fetchStakeholders() {
-        try {
-            const response = await axios.get("http://localhost:9091/api/getAllStakeholder", {
-                params: { user_email: userEmail },
-            });
+      try {
+        const response = await axios.get("http://localhost:9091/api/getAllStakeholder", {
+          params: { user_email: userEmail },
+        });
 
-             // Map the response to rename properties
-             const renamedStakeholders = response.data.map((stakeholder: any) => ({
-              id: stakeholder.id,
-              stakeholderName: stakeholder.stakeholder_name, // Renaming here
-              stakeholderType: stakeholder.type_name, // Renaming here
-              description: stakeholder.description,
-              emailAddress: stakeholder.email_address, // Renaming here
-          }));
-            setStakeholders(renamedStakeholders);
-            // setFilteredStakeholders(response.data);
+        // Map the response to rename properties
+        const renamedStakeholders = response.data.map((stakeholder: any) => ({
+          id: stakeholder.id,
+          stakeholderName: stakeholder.stakeholder_name, // Renaming here
+          stakeholderType: stakeholder.type_name, // Renaming here
+          description: stakeholder.description,
+          emailAddress: stakeholder.email_address, // Renaming here
+        }));
+        setStakeholders(renamedStakeholders);
+        // setFilteredStakeholders(response.data);
 
-        } catch (error) {
-            console.error("Error fetching stakeholders:", error);
-            showNotification("Error loading stakeholders. Please try again.");
-        } 
+      } catch (error) {
+        console.error("Error fetching stakeholders:", error);
+        showNotification("Error loading stakeholders. Please try again.");
+      }
     }
     fetchStakeholders();
-}, [userEmail]);
+  }, [userEmail]);
 
   // Define the TransformedResponse type for TypeScript
-interface TransformedResponse {
-  id: number;
-  stakeholderId: number;
-  surveyId: number;
-  questionId: number;
-  responseText: string;
-}
+  interface TransformedResponse {
+    id: number;
+    stakeholderId: number;
+    surveyId: number;
+    questionId: number;
+    responseText: string;
+  }
 
-// Function to fetch responses (moved outside of useEffect for reuse)
-const fetchResponses = async () => {
-  try {
+  // Function to fetch responses (moved outside of useEffect for reuse)
+  const fetchResponses = async () => {
+    try {
       const response = await axios.get<TransformedResponse[]>('http://localhost:9091/api/allResponses');
       // const response = await axios.get('http://localhost:9091/api/allResponses');
       setResponses(response.data); // Set the responses with the fetched data
-  } catch (error) {
+    } catch (error) {
       console.error('Error fetching responses:', error);
       showNotification("Error loading responses. Please try again.");
-  }
-};
+    }
+  };
 
-// Example useEffect where you want to call fetchResponses
-useEffect(() => {
-  fetchResponses();  // Fetch responses when the component loads
-}, []);
+  // Example useEffect where you want to call fetchResponses
+  useEffect(() => {
+    fetchResponses();  // Fetch responses when the component loads
+  }, []);
 
 
   // Fetch all surveys when the page loads
@@ -221,20 +221,20 @@ useEffect(() => {
 
 
   // Function to fetch questions (moved outside of useEffect for reuse)
-const fetchQuestions = async () => {
+  const fetchQuestions = async () => {
     try {
-        const response = await axios.get(`http://localhost:9091/api/allQuestion?user_email=${userEmail}`);
-        setQuestions(response.data); // Set the questions with the fetched data
+      const response = await axios.get(`http://localhost:9091/api/allQuestion?user_email=${userEmail}`);
+      setQuestions(response.data); // Set the questions with the fetched data
     } catch (error) {
-        console.error('Error fetching questions:', error);
-        showNotification("Error loading questions. Please try again.");
+      console.error('Error fetching questions:', error);
+      showNotification("Error loading questions. Please try again.");
     }
-};
-  
-// Fetch questions on component mount
-useEffect(() => {
-  fetchQuestions();
-}, []);
+  };
+
+  // Fetch questions on component mount
+  useEffect(() => {
+    fetchQuestions();
+  }, []);
 
   const handleCreateSurvey = async (e: FormEvent) => {
     e.preventDefault();
@@ -254,7 +254,7 @@ useEffect(() => {
       if (response.data.statusCode == 200) {
         const createdSurvey = { id: Date.now(), ...newSurvey };
         setSurveys([...surveys, createdSurvey]);
-        setNewSurvey({ title: '', description: '',user_email:userEmail });
+        setNewSurvey({ title: '', description: '', user_email: userEmail });
         setShowSurveyDialog(false);
         showNotification("Survey created successfully");
       }
@@ -314,82 +314,82 @@ useEffect(() => {
 
   const handleCreateQuestion = async () => {
     if (!newQuestion.surveyId || !newQuestion.questionText || !newQuestion.questionType) {
-        showNotification("Please fill in all fields.");
-        return;
+      showNotification("Please fill in all fields.");
+      return;
     }
 
     let formattedChoices: string[] = [];
 
     // Process choices for multiple_choice, checkbox, or rating types
     if (newQuestion.questionType === 'multiple_choice' || newQuestion.questionType === 'checkbox') {
-        // If it's multiple_choice or checkbox, we use the choices array
-        if (!newQuestion.choices.length) {
-            showNotification("Please add at least one choice.");
-            return;
-        }
-        formattedChoices = newQuestion.choices;
+      // If it's multiple_choice or checkbox, we use the choices array
+      if (!newQuestion.choices.length) {
+        showNotification("Please add at least one choice.");
+        return;
+      }
+      formattedChoices = newQuestion.choices;
     } else if (newQuestion.questionType === 'rating') {
-        // For rating, choices contain the minimum and maximum rating values
-        const minRating = '1';  // Default min rating is 1
-        const maxRating = newQuestion.choices[1] || '5';  // Use the value entered, default is 5
-        formattedChoices = [minRating, maxRating];
+      // For rating, choices contain the minimum and maximum rating values
+      const minRating = '1';  // Default min rating is 1
+      const maxRating = newQuestion.choices[1] || '5';  // Use the value entered, default is 5
+      formattedChoices = [minRating, maxRating];
     }
 
     const question = {
-        surveyId: newQuestion.surveyId,
-        questionText: newQuestion.questionText,
-        questionType: newQuestion.questionType,
-        choices: formattedChoices
+      surveyId: newQuestion.surveyId,
+      questionText: newQuestion.questionText,
+      questionType: newQuestion.questionType,
+      choices: formattedChoices
     };
 
     try {
-        const response = await axios.post('http://localhost:9091/api/addQuestion', question);
-        setQuestions([...questions, response.data]);  // Assuming response contains the newly created question
-        setNewQuestion({ surveyId: null, questionText: '', questionType: '', choices: [] });
-        setShowQuestionDialog(false);
-        fetchQuestions();
-        showNotification("Question added successfully");
+      const response = await axios.post('http://localhost:9091/api/addQuestion', question);
+      setQuestions([...questions, response.data]);  // Assuming response contains the newly created question
+      setNewQuestion({ surveyId: null, questionText: '', questionType: '', choices: [] });
+      setShowQuestionDialog(false);
+      fetchQuestions();
+      showNotification("Question added successfully");
     } catch (error) {
-        console.error('Error adding question:', error);
-        showNotification("Error adding question. Please try again.");
+      console.error('Error adding question:', error);
+      showNotification("Error adding question. Please try again.");
     }
-};
+  };
 
 
 
-const handleUpdateQuestion = async () => {
-  // Validate inputs
-  if (!editingQuestion.surveyId || !editingQuestion.questionText || !editingQuestion.questionType) {
+  const handleUpdateQuestion = async () => {
+    // Validate inputs
+    if (!editingQuestion.surveyId || !editingQuestion.questionText || !editingQuestion.questionType) {
       showNotification("Please fill in all fields.");
       return;
-  }
+    }
 
-  let formattedChoices = [];
+    let formattedChoices = [];
 
-  // Process choices for multiple_choice, checkbox, or rating types
-  if (editingQuestion.questionType === 'multiple_choice' || editingQuestion.questionType === 'checkbox') {
+    // Process choices for multiple_choice, checkbox, or rating types
+    if (editingQuestion.questionType === 'multiple_choice' || editingQuestion.questionType === 'checkbox') {
       // Ensure at least one choice is present
       if (!editingQuestion.choices.length) {
-          showNotification("Please add at least one choice.");
-          return;
+        showNotification("Please add at least one choice.");
+        return;
       }
       formattedChoices = editingQuestion.choices;
-  } else if (editingQuestion.questionType === 'rating') {
+    } else if (editingQuestion.questionType === 'rating') {
       // For rating, choices contain the minimum and maximum rating values
       const minRating = '1';  // Default min rating is 1
       const maxRating = editingQuestion.choices[1] || '5';  // Use the value entered, default is 5
       formattedChoices = [minRating, maxRating];
-  }
+    }
 
-  const question = {
+    const question = {
       id: editingQuestion.id,  // Pass the question ID in the body
       surveyId: editingQuestion.surveyId,
       questionText: editingQuestion.questionText,
       questionType: editingQuestion.questionType,
       choices: formattedChoices
-  };
+    };
 
-  try {
+    try {
       // Send the PUT request without binding the ID in the URL
       const response = await axios.put('http://localhost:9091/api/updateQuestion', question);
       setQuestions(questions.map(q => (q.id === editingQuestion.id ? response.data : q))); // Update the question in state
@@ -399,11 +399,11 @@ const handleUpdateQuestion = async () => {
 
       setEditingQuestion(null);
       showNotification("Question updated successfully");
-  } catch (error) {
+    } catch (error) {
       console.error('Error updating question:', error);
       showNotification("Error updating question. Please try again.");
-  }
-};
+    }
+  };
 
 
 
@@ -411,18 +411,18 @@ const handleUpdateQuestion = async () => {
     try {
       // Send PUT request to update the question and its choices' status to 0 (soft delete)
       await axios.put('http://localhost:9091/api/deleteQuestion', { id }); // Send the ID in the request body
-      
+
       // Update the state to remove the question and its responses
       setQuestions(questions.filter(q => q.id !== id));
       setResponses(responses.filter(r => r.questionId !== id));
-      
+
       showNotification("Question and its choices deleted successfully.");
     } catch (error) {
       console.error('Error deleting question:', error);
       showNotification("Error deleting question. Please try again.");
     }
   };
-  
+
 
   const handleShareSurvey = (survey) => {
     setSelectedSurvey(survey)
@@ -433,32 +433,32 @@ const handleUpdateQuestion = async () => {
   const handleSendSurvey = async () => {
     // Filter stakeholders based on selected stakeholder types
     const selectedStakeholders = stakeholders.filter(s => sharingStakeholderTypes.includes(s.stakeholderType));
-    
+
     // Prepare the payload to send to the backend
     const payload = {
-        surveyId: selectedSurvey.id,
-        surveyTitle: selectedSurvey.title,
-        selectedTypes: sharingStakeholderTypes,
-        user_email : userEmail,
+      surveyId: selectedSurvey.id,
+      surveyTitle: selectedSurvey.title,
+      selectedTypes: sharingStakeholderTypes,
+      user_email: userEmail,
     };
 
     try {
-        // Send a POST request to the backend using Axios
-        const response = await axios.post('http://localhost:9091/api/share', payload);
-        // Handle success response
-        console.log(response.data.message);
-        showNotification(response.data.message);
+      // Send a POST request to the backend using Axios
+      const response = await axios.post('http://localhost:9091/api/share', payload);
+      // Handle success response
+      console.log(response.data.message);
+      showNotification(response.data.message);
     } catch (error) {
-        // Handle error response
-        console.error("Error sharing survey: ", error);
-        showNotification("Error sharing survey.");
+      // Handle error response
+      console.error("Error sharing survey: ", error);
+      showNotification("Error sharing survey.");
     }
 
     // Reset state after sharing
     setShowShareDialog(false);
     setSelectedSurvey(null);
     setSharingStakeholderTypes([]);
-};
+  };
 
 
   const showNotification = (message: string) => {
@@ -500,6 +500,12 @@ const handleUpdateQuestion = async () => {
             <TabsTrigger value="responses">Responses</TabsTrigger>
             <TabsTrigger value="submissions">Submissions</TabsTrigger>
           </TabsList>
+
+          {notification.show && (
+            <div className="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative mb-4" role="alert">
+              <span className="block sm:inline">{notification.message}</span>
+            </div>
+          )}
 
           <TabsContent value="surveys">
             <div className="flex justify-between items-center mb-4">
@@ -547,32 +553,37 @@ const handleUpdateQuestion = async () => {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-    {surveys.map((survey) => (
-      <Card key={survey.id}>
-        <CardHeader>
-          <CardTitle>{survey.title}</CardTitle>
-          <CardDescription>{survey.description}</CardDescription>
-        </CardHeader>
-        <CardFooter className="flex justify-between">
-          <Button variant="outline" onClick={() => setEditingSurvey(survey)}>
-            <Edit className="mr-2 h-4 w-4" /> Edit
-          </Button>
-          <Button variant="outline" onClick={() => handleViewDetails(survey)}>
-            <Eye className="mr-2 h-4 w-4" /> View Details
-          </Button>
-          <Button variant="outline" onClick={() => handleShareSurvey(survey)}>
-            <Share2 className="mr-2 h-4 w-4" /> Share
-          </Button>
-          <Button variant="outline" onClick={() => handleShowChart(survey.id)}>
-            <BarChartIcon className="mr-2 h-4 w-4" /> Chart
-          </Button>
-          <Button variant="destructive" onClick={() => handleDeleteSurvey(survey.id)}>
-            <Trash className="mr-2 h-4 w-4" /> Delete
-          </Button>
-        </CardFooter>
-      </Card>
-    ))}
-  </div>
+              {surveys.map((survey) => (
+                <Card key={survey.id}>
+                  <CardHeader>
+                    <CardTitle>{survey.title}</CardTitle>
+                    <CardDescription>{survey.description}</CardDescription>
+                  </CardHeader>
+                  <CardFooter className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-2">
+                    <Button variant="outline" onClick={() => setEditingSurvey(survey)} className="w-full">
+                      <Edit className="h-4 w-4 sm:mr-2" />
+                      <span className="hidden sm:inline">Edit</span>
+                    </Button>
+                    <Button variant="outline" onClick={() => handleViewDetails(survey)} className="w-full">
+                      <Eye className="h-4 w-4 sm:mr-2" />
+                      <span className="hidden sm:inline">View Details</span>
+                    </Button>
+                    <Button variant="outline" onClick={() => handleShareSurvey(survey)} className="w-full">
+                      <Share2 className="h-4 w-4 sm:mr-2" />
+                      <span className="hidden sm:inline">Share</span>
+                    </Button>
+                    <Button variant="outline" onClick={() => handleShowChart(survey.id)} className="w-full">
+                      <BarChartIcon className="h-4 w-4 sm:mr-2" />
+                      <span className="hidden sm:inline">Chart</span>
+                    </Button>
+                    <Button variant="destructive" onClick={() => handleDeleteSurvey(survey.id)} className="w-full col-span-2 sm:col-span-1">
+                      <Trash className="h-4 w-4 sm:mr-2" />
+                      <span className="hidden sm:inline">Delete</span>
+                    </Button>
+                  </CardFooter>
+                </Card>
+              ))}
+            </div>
 
             {editingSurvey && (
               <Dialog open={!!editingSurvey} onOpenChange={() => setEditingSurvey(null)}>
@@ -677,31 +688,31 @@ const handleUpdateQuestion = async () => {
             </Dialog>
 
             <Dialog open={showChartDialog} onOpenChange={setShowChartDialog}>
-    <DialogContent className="sm:max-w-[600px]">
-      <DialogHeader>
-        <DialogTitle>Survey Results Chart</DialogTitle>
-      </DialogHeader>
-      <div className="py-4">
-        {chartData && (
-          <Bar
-            data={chartData}
-            options={{
-              responsive: true,
-              plugins: {
-                legend: {
-                  position: 'top' as const,
-                },
-                title: {
-                  display: true,
-                  text: 'Survey Responses',
-                },
-              },
-            }}
-          />
-        )}
-      </div>
-    </DialogContent>
-  </Dialog>
+              <DialogContent className="sm:max-w-[600px]">
+                <DialogHeader>
+                  <DialogTitle>Survey Results Chart</DialogTitle>
+                </DialogHeader>
+                <div className="py-4">
+                  {chartData && (
+                    <Bar
+                      data={chartData}
+                      options={{
+                        responsive: true,
+                        plugins: {
+                          legend: {
+                            position: 'top' as const,
+                          },
+                          title: {
+                            display: true,
+                            text: 'Survey Responses',
+                          },
+                        },
+                      }}
+                    />
+                  )}
+                </div>
+              </DialogContent>
+            </Dialog>
           </TabsContent>
 
           <TabsContent value="questions">
@@ -1063,11 +1074,7 @@ const handleUpdateQuestion = async () => {
           </TabsContent>
         </Tabs>
 
-        {notification.show && (
-          <div className="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative mb-4" role="alert">
-            <span className="block sm:inline">{notification.message}</span>
-          </div>
-        )}
+
       </div>
     </Layout>
 
