@@ -45,7 +45,7 @@ This Stakeholder Management System is designed to address key gaps in traditiona
 6. Open an another terminal in the project path and run the `Backend service`
 
 > ```
-> cd stakeholder_management_metrics_api
+> cd stakeholder_management_backend
 > bal run
 > ```
 
