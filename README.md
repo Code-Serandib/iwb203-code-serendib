@@ -273,3 +273,49 @@ This calculates the **Project Risk** of stakeholders in a **Stakeholder Manageme
 2. Complete the surveys and enter stakeholder details.
 3. Click `Submit` to calculate the risk.
 4. The result will display the `overall project risk`, `risk level`, and `actions` to be taken based on the calculation.
+
+### Risk Score Calculation
+
+This is part of a stakeholder management system that calculates the risk score of stakeholders based on surveys measuring various factors such as their `role`, `contribution`, and  `engagement`. 
+
+#### Features
+
+- **Surveys for Risk Evaluation**: Users fill in four surveys with questions that evaluate stakeholder engagement, influence, and contribution to the project.
+- **Risk Score Calculation**: The system calculates a normalized risk score (between 0 and 1) based on survey responses and provides a risk level classification.
+- **Interactive Modals**: Surveys are presented within modals for better user experience, with real-time score updates.
+
+#### Components
+
+##### RiskScoreForm
+
+This is the main component that handles the risk score calculation. It consists of multiple survey sections for:
+
+- **Stakeholder Weight Start (Ws)**: Evaluates the initial contribution and role of the stakeholder.
+- **Stakeholder Weight End (We)**: Assesses the stakeholder's involvement and satisfaction at the end of the project.
+- **Stakeholder Influence (Si)**: Measures the stakeholder's influence and authority in decision-making.
+- **Engagement Influence (Ei)**: Evaluates the stakeholder's engagement, responsiveness, and problem-solving capabilities.
+
+> Each survey is displayed in a modal dialog where users can answer multiple-choice questions.
+
+##### Surveys
+
+The project includes four distinct surveys, each focusing on a different aspect of stakeholder assessment:
+
+- **Stakeholder Weight Start (Ws)**: Evaluates the stakeholder's role, experience, and involvement.
+- **Stakeholder Weight End (We)**: Analyzes how the stakeholder's involvement changed during the project.
+- **Stakeholder Influence (Si)**: Measures the stakeholder’s power, decision-making authority, and influence on others.
+- **Engagement Influence (Ei)**: Assesses the stakeholder's engagement, responsiveness, and initiative.
+
+##### Risk Score Calculation
+
+The calculation is done as follows:
+
+- Each survey question is assigned a score based on the selected answer (normalized on a 0-1 scale).
+- These scores are collected for each survey and summed up.
+- The frontend sends the results (`Ws`, `We`, `Si`, and `Ei`) to the backend API, which calculates the final risk score and risk level.
+
+#### Usage
+
+1. Open the form and fill in the values for each of the surveys.
+2. Submit the form to calculate the risk score.
+3. The calculated risk score and its level will be displayed on the screen.
