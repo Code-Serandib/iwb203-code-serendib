@@ -267,3 +267,9 @@ This calculates the **Project Risk** of stakeholders in a **Stakeholder Manageme
    - **Risk Level**: A descriptive risk level such as "Low," "Moderate," or "High."
    - **Actionable Steps**: Recommended actions based on the calculated risk level.
 
+#### Usage
+
+1. Navigate to the Project Risk Calculator page.
+2. Complete the surveys and enter stakeholder details.
+3. Click `Submit` to calculate the risk.
+4. The result will display the `overall project risk`, `risk level`, and `actions` to be taken based on the calculation.
