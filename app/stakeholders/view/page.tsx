@@ -14,7 +14,7 @@ export default function ViewStakeholders() {
     const [selectedType, setSelectedType] = useState<string>("");
     const [emailQuery, setEmailQuery] = useState<string>("");
     const [isLoading, setIsLoading] = useState(true);
-    const userEmail = "a@gmail.com"; // Replace with actual user email
+    const userEmail = localStorage.getItem('email'); // Replace with actual user email
 
     useEffect(() => {
         // Fetch stakeholders from the API using Axios
@@ -94,7 +94,7 @@ export default function ViewStakeholders() {
                             {/* Combo box for sorting by stakeholder type */}
                             <div className="flex-1">
                                 <label htmlFor="typeSort" className="font-medium">Sort by Type</label>
-                                <select
+                                {/* <select
                                     id="typeSort"
                                     className="w-full px-3 py-2 border rounded-md"
                                     value={selectedType}
@@ -106,7 +106,21 @@ export default function ViewStakeholders() {
                                             {type.type_name}
                                         </option>
                                     ))}
-                                </select>
+                                </select> */}
+                                <select
+    id="typeSort"
+    className="w-full px-3 py-2 border rounded-md"
+    value={selectedType}
+    onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setSelectedType(e.target.value)}
+>
+    <option value="">All Types</option>
+    {stakeholderTypes.map((type: any, index: number) => (
+        <option key={type.id || index} value={type.id}>
+            {type.type_name}
+        </option>
+    ))}
+</select>
+
                             </div>
 
                             {/* Text field for searching by email */}

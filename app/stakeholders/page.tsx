@@ -63,9 +63,8 @@ export default function StakeholderRegistration() {
     // Fetch the user email from the backend when the component mounts
     const fetchUserEmail = async () => {
       try {
-        const response = await axios.get('http://localhost:9091/api/callback');
         // setUserEmail(response.data.user_email);
-        setUserEmail("a@gmail.com");
+        setUserEmail(localStorage.getItem('email')+"");
         // alert("abc");
         // alert(userEmail);
       } catch (error) {
