@@ -356,3 +356,41 @@ This is for calculating the `Balanced Scorecard (BSC)` of stakeholders in a stak
 - Main form for submitting weight values and calculating the `BSC index`.
 - Handles `input validation`, `form submission`, and `communication` with the backend.
 
+### Engagement Priority Score (EPS) Calculator
+
+This is for calculating the `Engagement Priority Score (EPS)` of stakeholders in a stakeholder management system. The EPS is calculated based on various weighted factors such as `stakeholder engagement`, `influence`, `interest`, and more. These factors are input via surveys, and the scores are normalized and sent to the backend for further processing.
+
+#### Features
+
+- Dynamic surveys for collecting stakeholder data across different criteria.
+- Calculation of Engagement Priority Score (EPS) using weights for various stakeholder attributes.
+- Integration with an API to submit calculated EPS scores and retrieve results.
+
+#### Key Components
+
+##### Surveys
+
+The EPS is based on five categories, each with its own set of survey questions:
+
+1. **Engagement Weight (We)**: Measures the frequency and quality of the stakeholder’s engagement.
+2. **Influence Weight (Wi)**: Measures the formal and informal authority of the stakeholder.
+3. **Stakeholder Interest (Ws)**: Measures the stakeholder’s relevance, gain, and risks concerning the project.
+4. **Engagement Level (Ei)**: Measures the participation and communication frequency of the stakeholder.
+5. **Influence Impact (Ii)**: Measures the stakeholder's control over resources and decision-making power.
+6. **Stakeholder Impact (Si)**: Measures the impact the project has on the stakeholder's role and goals.
+
+##### UI Components
+
+1. **Survey Modal**: A dialog modal that displays survey questions to gather user input for each weight category.
+2. **Form Inputs**: Accepts values for each weight `(We, Wi, Ws, Ei, Ii, Si)`, and sends them to the backend for EPS calculation.
+3. **Result Display**: Shows the calculated EPS and the priority level of the stakeholder after form submission.
+
+##### How It Works
+
+1. **Survey Modal**: For each weight category, the user can launch a survey modal, answer the questions, and get a score. The score is normalized between 0 and 1 and used as the weight  for that category.
+
+2. **EPS Calculation**: After inputting all the required weights, the user submits the form, which sends a POST request to the backend API with the weight data.
+
+3. **Backend Integration**: The API processes the request and calculates the EPS index (EPSi) and priority level based on the input values.
+
+4. **Result Display**: Once the calculation is complete, the EPS score and priority are displayed to the user.
