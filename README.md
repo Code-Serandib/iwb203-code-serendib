@@ -1,10 +1,10 @@
 # Stakeholder Management System
 
-### With analytical insight.
+## With analytical insight.
 
 This Stakeholder Management System is designed to address key gaps in traditional stakeholder management solutions by providing advanced analytical tools that allow organizations to make  data-driven decisions, mitigate risks, and optimize stakeholder engagement. Built with Next.js for the frontend and Ballerina for the backend, and using MySQL for database management, this  system helps organizations strategically prioritize stakeholders and improve project outcomes. 
 
-#### Set up
+### Set up
 
 1. Clone the project 
 
@@ -55,3 +55,34 @@ This Stakeholder Management System is designed to address key gaps in traditiona
 > cd stakeholder-management-frontend
 > npm run dev
 > ```
+
+## Analytical Insights
+
+### Influence Index Calculator
+
+#### Features
+
+- **Survey Modal** for collecting stakeholder details on Power, Legitimacy, and Urgency.
+- Dynamic influence calculation based on stakeholder type.
+- Integration with a backend API to retrieve the calculated influence index.
+- Visual feedback on the influence result, categorized into low, medium, or high influence levels.
+
+#### How It Works
+
+This project uses a form-based approach to gather data about stakeholders' Power, Legitimacy, and Urgency. Each factor is derived from a series of survey questions, and the scores are   normalized to values between 0 and 10.
+
+##### Steps:
+
+1. Power: Evaluates the stakeholder's role, authority, and control over resources or decision-making.
+2. Legitimacy: Measures the stakeholder's standing in relation to their official role, expertise, or recognized authority.
+3. Urgency: Assesses the immediacy and importance of the stakeholder's needs or issues.
+4. The survey responses are converted into a numerical score, and these scores are used to compute the Influence Index.
+
+##### Influence Calculation:
+
+1. Each survey question provides a set of options, and the selected option is mapped to a score.
+2. The score is normalized and calculated as a factor out of 10 for Power, Legitimacy, and Urgency.
+3. The three factors are then passed to a backend API that computes the overall Influence Index using custom logic.
+
+
+
