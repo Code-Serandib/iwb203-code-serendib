@@ -8,6 +8,6 @@ This Stakeholder Management System is designed to address key gaps in traditiona
 
 1. Clone the project 
 
-```
-> $ git clone https://github.com/Code-Serandib/iwb203-code-serendib.git
-```
+> ```
+>  $ git clone https://github.com/Code-Serandib/iwb203-code-serendib.git
+> ```
