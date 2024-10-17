@@ -17,39 +17,6 @@ export default function DashboardPage() {
   const profileUpdated = localStorage.getItem("profileUpdated");
   const googleAccessToken = localStorage.getItem("googleAccessToken");
 
-  useEffect(() => {
-    async function fetchData() {
-      try {
-        const [meetingsRes, stakeholdersRes, totalMeetingsRes] = await Promise.all([
-          axios.get('http://localhost:9091/api/meetingCountByMonth'),
-          axios.get('http://localhost:9091/api/totalStakeholdersCount'),
-          axios.get('http://localhost:9091/api/totalMeetingsCount')
-        ]);
-
-        setMeetingsByMonth(meetingsRes.data);
-        setTotalStakeholders(stakeholdersRes.data);
-        setTotalMeetings(totalMeetingsRes.data);
-      } catch (error) {
-        console.error('Error fetching dashboard data:', error);
-      } finally {
-        setLoading(false);
-      }
-    }
-
-    fetchData();
-  }, []);
-  
-  useEffect(() => { 
-    // const profileUpdated = localStorage.getItem("profileUpdated");
-    if (googleAccessToken) {
-      const res = getUserFromAccessToken(googleAccessToken);
-    }
-  }, [router]);
-
-  if (loading) {
-    return <Layout><div>Loading...</div></Layout>;
-  }
-  
   const getUserFromAccessToken = async (accessToken: string | null) => {
     try {
         const response = await fetch("http://localhost:9091/api/getUserDataFromAccessToken", {
@@ -82,6 +49,42 @@ export default function DashboardPage() {
         return null;
     }
 };
+
+useEffect(() => { 
+  // const profileUpdated = localStorage.getItem("profileUpdated");
+  if (googleAccessToken) {
+    const res = getUserFromAccessToken(googleAccessToken);
+  }
+}, [router]);
+
+  useEffect(() => {
+    
+    async function fetchData() {
+      try {
+        const [meetingsRes, stakeholdersRes, totalMeetingsRes] = await Promise.all([
+          axios.get('http://localhost:9091/api/meetingCountByMonth'),
+          axios.get('http://localhost:9091/api/totalStakeholdersCount'),
+          axios.get('http://localhost:9091/api/totalMeetingsCount')
+        ]);
+
+        setMeetingsByMonth(meetingsRes.data);
+        setTotalStakeholders(stakeholdersRes.data);
+        setTotalMeetings(totalMeetingsRes.data);
+      } catch (error) {
+        console.error('Error fetching dashboard data:', error);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    fetchData();
+  }, []);
+  
+  if (loading) {
+    return <Layout><div>Loading...</div></Layout>;
+  }
+  
+  
 
   return (
     <Layout>

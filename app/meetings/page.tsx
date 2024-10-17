@@ -82,13 +82,13 @@ export default function MeetingsPage() {
     useEffect(() => {
         const userEmail = localStorage.getItem('email');
         const token = localStorage.getItem('token');
-        if (userEmail && token) {
+        if (userEmail) {
             axios.get(`http://localhost:9091/api/getAllStakeholder`, {
                 params: {
                     user_email: userEmail
                 },
                 headers: {
-                    Authorization: `Bearer ${token}`
+                    // Authorization: `Bearer ${token}`
                 }
             })
                 .then(response => {
