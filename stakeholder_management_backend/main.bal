@@ -36,7 +36,7 @@ service /api on new http:Listener(9091) {
         check initDatabase(self.dbClient);
 
         email:SmtpConfiguration smtpConfig = {
-            port: 2525,
+            port: survey:SMTP_PORT,
             security: email:START_TLS_AUTO
         };
 

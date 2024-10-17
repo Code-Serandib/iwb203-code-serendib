@@ -4,12 +4,13 @@ import ballerina/io;
 public configurable string SMTP_EMAIL = ?;
 public configurable string SMTP_USERNAME = ?;
 public configurable string SMTP_PASSWORD = ?;
+public configurable int SMTP_PORT = ?;
 
 // Function to send an email
  function sendEmailSetOfStakeholders(EmailDetails emailDetails) returns error? {
 
     email:SmtpConfiguration smtpConfig = {
-        port: 587, 
+        port: SMTP_PORT, 
         security: email:START_TLS_AUTO
     };
 
@@ -33,7 +34,7 @@ public configurable string SMTP_PASSWORD = ?;
 // Function to send an email
 function sendEmailToStakeholder(string recipientEmail, string subject, string messageBody) returns error? {
     email:SmtpClient smtpClient = check new (host = SMTP_EMAIL,
-        port = 465,
+        port = SMTP_PORT,
         username = SMTP_USERNAME,
         password = SMTP_PASSWORD, 
         security = email:SSL
