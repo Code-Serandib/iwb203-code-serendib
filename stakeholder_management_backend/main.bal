@@ -40,7 +40,7 @@ service /api on new http:Listener(9091) {
             security: email:START_TLS_AUTO
         };
 
-        self.emailClient = check new (SMTP_EMAIL, SMTP_USERNAME, SMTP_PASSWORD, smtpConfig);
+        self.emailClient = check new (survey:SMTP_EMAIL, survey:SMTP_USERNAME, survey:SMTP_PASSWORD, smtpConfig);
     }
 
     @http:ResourceConfig {

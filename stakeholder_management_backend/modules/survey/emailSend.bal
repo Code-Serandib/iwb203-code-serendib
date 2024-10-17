@@ -1,6 +1,10 @@
 import ballerina/email;
 import ballerina/io;
 
+public configurable string SMTP_EMAIL = ?;
+public configurable string SMTP_USERNAME = ?;
+public configurable string SMTP_PASSWORD = ?;
+
 // Function to send an email
  function sendEmailSetOfStakeholders(EmailDetails emailDetails) returns error? {
 
@@ -10,14 +14,14 @@ import ballerina/io;
     };
 
     email:SmtpClient smtpClient = check new email:SmtpClient(
-        host = "smtp.gmail.com",
-        username = "from@gmail.com",
-        password = "abcc cccc cccc cccc",
+        host = SMTP_EMAIL,
+        username = SMTP_USERNAME,
+        password = SMTP_PASSWORD,
         clientConfig = smtpConfig
     );
 
     email:Message emailMessage = {
-        'from: "from@gmail.com",
+        'from: "codeserandib@gmail.com",
         to: [emailDetails.recipient],
         subject: emailDetails.subject,
         htmlBody: emailDetails.bodyHtml
@@ -28,16 +32,16 @@ import ballerina/io;
 
 // Function to send an email
 function sendEmailToStakeholder(string recipientEmail, string subject, string messageBody) returns error? {
-    email:SmtpClient smtpClient = check new (host = "smtp.gmail.com",
+    email:SmtpClient smtpClient = check new (host = SMTP_EMAIL,
         port = 465,
-        username = "your@gmail.com",
-        password = "cccc cccc cccc cccc", 
+        username = SMTP_USERNAME,
+        password = SMTP_PASSWORD, 
         security = email:SSL
         // auth = true,
     );
 
     email:Message emailMessage = {
-        'from: "your@gmail.com",
+        'from: "codeserandib@gmail.com",
         to: recipientEmail,
         subject: subject,
         htmlBody: messageBody
