@@ -194,7 +194,7 @@ Once the benefit and cost values are entered or calculated through the surveys, 
 2. Calculate any of the stakeholder metrics by switching between tabs: SIM, DSI, SIS, and SNS.
 3. View the results directly on the page, displayed in a formatted structure.
 
-### Engagement Drop Calculator - Stakeholder Management System
+### Engagement Drop Calculator
 
 This for calculating the engagement drop of stakeholders within a stakeholder management system. It gathers stakeholder-related data through surveys and calculates engagement drop using  input data such as the `stakeholder's weight at the start (Ws)`, `weight at the end (We)`, `stakeholder influence (Si)`, and `engagement influence (Ei)`. The result is sent to a  backend API for processing. 
 
@@ -211,16 +211,16 @@ This for calculating the engagement drop of stakeholders within a stakeholder ma
 
 > The app presents four surveys:
 
-1. **Stakeholder Weight Start (Ws) Survey** 
+1. **Stakeholder Weight Start (Ws) Survey**: 
 Questions assessing the initial engagement level of the stakeholder in the project.
 
-2. **Stakeholder Weight End (We) Survey** 
+2. **Stakeholder Weight End (We) Survey**: 
 Questions assessing the final engagement level of the stakeholder after project completion.
 
-3. **Stakeholder Influence (Si) Survey** 
+3. **Stakeholder Influence (Si) Survey**: 
 Questions evaluating the stakeholder's influence in the project and organization.
 
-4. **Engagement Influence (Ei) Survey** 
+4. **Engagement Influence (Ei) Survey**: 
 Questions determining the stakeholder's responsiveness, feedback quality, and participation during the project.
 
 > Each survey consists of multiple-choice questions, and scores are normalized between 0.0 and 1.0.
@@ -238,5 +238,32 @@ To calculate the engagement drop:
 
 To add multiple stakeholders, click the Add Stakeholder button to dynamically add new sections for input. Each stakeholder’s details can be individually calculated.
 
+### Project Risk Calculation
 
+This calculates the **Project Risk** of stakeholders in a **Stakeholder Management System** by considering various factors such as `stakeholder involvement`, `influence`, and `satisfaction` during project execution. The tool uses survey-based inputs to evaluate these risk factors and provides a risk level and actionable insights.
+
+#### Features
+
+- **Dynamic Risk Input Forms**: Users can input stakeholder data such as weight and influence, which are collected via interactive forms.
+- **Survey Modal**: The app includes predefined surveys for evaluating different aspects of stakeholder engagement, contribution, and influence.
+- **Real-time Calculation**: Once the input is provided, the project risk is calculated and displayed, including a risk score, risk level, and recommended action.
+
+#### How It Works
+
+1. **Survey Input**: The app provides four main survey areas, each related to a specific risk factor:
+
+   - **Ws (Stakeholder Weight Start)**
+   - **We (Stakeholder Weight End)**
+   - **Si (Stakeholder Influence)**
+   - **Ei (Engagement Influence)**
+   
+  > Each survey asks multiple questions, and users select from predefined options that correspond to specific scores. These scores are normalized to a scale of 0-1.
+
+2. **Risk Input Set**: Each set of inputs is related to a specific stakeholder, including their weight and influence. Users can add multiple risk input sets to represent various  stakeholders.
+
+3. **Calculation**: The data from these surveys and risk inputs are sent to the backend API, which returns:
+
+   - **Total Project Risk**: A score representing the overall project risk based on the provided inputs.
+   - **Risk Level**: A descriptive risk level such as "Low," "Moderate," or "High."
+   - **Actionable Steps**: Recommended actions based on the calculated risk level.
 
