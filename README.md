@@ -194,3 +194,49 @@ Once the benefit and cost values are entered or calculated through the surveys, 
 2. Calculate any of the stakeholder metrics by switching between tabs: SIM, DSI, SIS, and SNS.
 3. View the results directly on the page, displayed in a formatted structure.
 
+### Engagement Drop Calculator - Stakeholder Management System
+
+This for calculating the engagement drop of stakeholders within a stakeholder management system. It gathers stakeholder-related data through surveys and calculates engagement drop using  input data such as the `stakeholder's weight at the start (Ws)`, `weight at the end (We)`, `stakeholder influence (Si)`, and `engagement influence (Ei)`. The result is sent to a  backend API for processing. 
+
+#### Features
+
+- Dynamic forms to capture stakeholder-specific data.
+- Surveys to calculate normalized scores for stakeholder weight, influence, and engagement.
+- Integration with an API to compute engagement drop alerts.
+- Use of modern React UI components such as dialogs, input fields, and radio buttons.
+
+#### Usage
+
+##### Surveys
+
+> The app presents four surveys:
+
+1. **Stakeholder Weight Start (Ws) Survey** 
+Questions assessing the initial engagement level of the stakeholder in the project.
+
+2. **Stakeholder Weight End (We) Survey** 
+Questions assessing the final engagement level of the stakeholder after project completion.
+
+3. **Stakeholder Influence (Si) Survey** 
+Questions evaluating the stakeholder's influence in the project and organization.
+
+4. **Engagement Influence (Ei) Survey** 
+Questions determining the stakeholder's responsiveness, feedback quality, and participation during the project.
+
+> Each survey consists of multiple-choice questions, and scores are normalized between 0.0 and 1.0.
+
+##### Engagement Drop Calculation
+
+To calculate the engagement drop:
+
+1. Enter the values for Ws, We, Si, and Ei for each stakeholder.
+2. Optionally, click on the info icons next to each field to open a survey that will calculate the respective value automatically.
+3. After filling out the form, click Submit Survey to calculate the normalized score for each section.
+4. Upon form submission, the application sends the data to an API (http://localhost:9091/api/engagement_drop_alert) to compute the engagement drop alert.
+
+##### Adding New Stakeholders
+
+To add multiple stakeholders, click the Add Stakeholder button to dynamically add new sections for input. Each stakeholder’s details can be individually calculated.
+
+
+
