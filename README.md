@@ -153,3 +153,44 @@ It is part of a stakeholder management system designed to help organizations cal
 ##### Social Exchange Calculation
 
 Once the benefit and cost values are entered or calculated through the surveys, the system submits this data to the backend API `(/api/social_exchange_cal)` to calculate the Social  Exchange Value. This value helps in determining the overall relationship value with the stakeholder, guiding future strategic decisions.
+
+### Stakeholder System Theories
+
+> This calculates various stakeholder metrics for `Stakeholder System Theories` including:
+
+- **Stakeholder Influence Matrix (SIM)**
+- **Dynamic Stakeholder Impact (DSI)**
+- **Systemic Influence Score (SIS)**
+- **Stakeholder Network Stability (SNS)**
+
+#### Features
+
+> The application offers the following features:
+
+##### Stakeholder Influence Matrix (SIM)
+
+- Calculate and visualize the influence that stakeholders have on each other.
+
+##### Dynamic Stakeholder Impact (DSI)
+
+- Determine how behavior changes in one stakeholder can dynamically affect others.
+
+##### Systemic Influence Score (SIS)
+
+- Measure the overall influence a stakeholder has within the system.
+
+##### Stakeholder Network Stability (SNS)
+
+- Assess the stability of the stakeholder network based on behavior changes.
+
+##### Manage Stakeholders
+
+- Add, edit, or remove stakeholders.
+- Update stakeholder connection strength, influence, and delta behavior dynamically.
+
+#### Usage
+
+1. Add stakeholders and their respective details including name, connection strength, and influence.
+2. Calculate any of the stakeholder metrics by switching between tabs: SIM, DSI, SIS, and SNS.
+3. View the results directly on the page, displayed in a formatted structure.
+
