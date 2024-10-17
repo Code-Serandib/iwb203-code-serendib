@@ -17,10 +17,6 @@ configurable string DB_URL = ?;
 configurable string DB_USERNAME = ?;
 configurable string DB_PASSWORD = ?;
 
-configurable string SMTP_EMAIL = ?;
-configurable string SMTP_USERNAME = ?;
-configurable string SMTP_PASSWORD = ?;
-
 // OAuth2 client configuration for Google
 oauth2:ClientCredentialsGrantConfig oauthConfig = {
     clientId: CLIENT_ID,
