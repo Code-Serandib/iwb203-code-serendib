@@ -319,3 +319,39 @@ The calculation is done as follows:
 1. Open the form and fill in the values for each of the surveys.
 2. Submit the form to calculate the risk score.
 3. The calculated risk score and its level will be displayed on the screen.
+
+### Balanced Scorecard (BSC) Calculator
+
+This is for calculating the `Balanced Scorecard (BSC)` of stakeholders in a stakeholder management system. The `BSC` is a performance measurement framework that helps organizations  align business activities with the vision and strategy of the organization by evaluating stakeholders in four key areas: `financial`, `customer`, `internal processes`, and `learning &  growth`. 
+
+#### Features
+
+- Surveys for each Balanced Scorecard perspective to gather stakeholder-related data.
+- Calculation of the `BSC index (BSCi)` based on input weights and survey data.
+- Real-time data submission to the backend using Axios for BSC calculation.
+- Modular components for the survey and score calculation.
+
+#### Usage
+
+1. Open the application and fill in the weight values for each BSC perspective using the available input fields or surveys.
+2. The four perspectives of the Balanced Scorecard:
+
+   - Financial (Wf)
+   - Customer (Wc)
+   - Internal Processes (Wp)
+   - Learning & Growth (Wl)
+
+3. After filling in the data, click the Submit button. The data will be sent to the backend API, and the BSC index and decision will be displayed based on the calculated result.
+
+#### Components
+
+##### SurveyModal
+
+- Displays the survey for each `BSC` perspective and collects answers from the user.
+- Questions are predefined in the `wfSurvey`, `wcSurvey`, `wpSurvey`, and `wlSurvey` arrays, and scores are normalized upon submission.
+
+##### BSCForm
+
+- Main form for submitting weight values and calculating the `BSC index`.
+- Handles `input validation`, `form submission`, and `communication` with the backend.
+
