@@ -36,26 +36,26 @@ export default function Navbar({ toggleSidebar }: NavbarProps) {
     setIsProfileDropdownOpen(!isProfileDropdownOpen);
   };
 
-  useEffect(() => {
-    const fetchUserData = async () => {
-      const storedEmail = localStorage.getItem("email");
+  // useEffect(() => {
+  //   const fetchUserData = async () => {
+  //     const storedEmail = localStorage.getItem("email");
 
-      if (!storedEmail) return;
+  //     if (!storedEmail) return;
 
-      try {
-        const response = await axios.get(`http://localhost:9091/api/getUserDetails?email=${storedEmail}`);
-        if (response.data) {
-          const userData = response.data;
-          // Set state variables with the fetched data
-          setUsername(userData.username);
-        }
-      } catch (error) {
-        console.error("Error fetching user data:", error);
-      }
-    };
+  //     try {
+  //       const response = await axios.get(`http://localhost:9091/api/getUserDetails?email=${storedEmail}`);
+  //       if (response.data) {
+  //         const userData = response.data;
+  //         // Set state variables with the fetched data
+  //         setUsername(userData.username);
+  //       }
+  //     } catch (error) {
+  //       console.error("Error fetching user data:", error);
+  //     }
+  //   };
 
-    fetchUserData();
-  }, []);
+  //   fetchUserData();
+  // }, []);
 
   return (
     <header className="flex items-center justify-between px-6 py-4 bg-white border-b">
@@ -82,8 +82,8 @@ export default function Navbar({ toggleSidebar }: NavbarProps) {
               alt="User avatar"
               className="w-8 h-8 rounded-full"
             />
-            <span>{username}</span>
-            {/* <span>john doe</span> */}
+            {/* <span>{username}</span> */}
+            <span>john doe</span>
             <ChevronDown size={16} />
           </Button>
 
