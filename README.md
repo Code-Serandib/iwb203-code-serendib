@@ -4,6 +4,8 @@
 
 This Stakeholder Management System is designed to address key gaps in traditional stakeholder management solutions by providing advanced analytical tools that allow organizations to make  data-driven decisions, mitigate risks, and optimize stakeholder engagement. Built with Next.js for the frontend and Ballerina for the backend, and using MySQL for database management, this  system helps organizations strategically prioritize stakeholders and improve project outcomes. 
 
+[Stakeholder Management System Demonstration (youtube Link)](https://youtu.be/Um8PzzQEaus)
+
 ### Set up
 
 1. Clone the project 
@@ -234,7 +236,7 @@ To calculate the engagement drop:
 1. Enter the values for Ws, We, Si, and Ei for each stakeholder.
 2. Optionally, click on the info icons next to each field to open a survey that will calculate the respective value automatically.
 3. After filling out the form, click Submit Survey to calculate the normalized score for each section.
-4. Upon form submission, the application sends the data to an API (http://localhost:9091/api/engagement_drop_alert) to compute the engagement drop alert.
+4. Upon form submission, the application sends the data to an API to compute the engagement drop alert.
 
 ##### Adding New Stakeholders
 
