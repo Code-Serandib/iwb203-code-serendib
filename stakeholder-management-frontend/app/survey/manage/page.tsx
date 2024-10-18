@@ -307,7 +307,7 @@ export default function EnhancedSurveyManagement() {
       showNotification("Survey deleted successfully");
     } catch (error) {
       console.error("Error deleting survey:", error);
-      showNotification("Error deleting survey. Please try again.");
+      showNotification("Error deleting survey. Please refreash the page.");
     }
   };
 

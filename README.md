@@ -4,6 +4,8 @@
 
 This Stakeholder Management System is designed to address key gaps in traditional stakeholder management solutions by providing advanced analytical tools that allow organizations to make  data-driven decisions, mitigate risks, and optimize stakeholder engagement. Built with Next.js for the frontend and Ballerina for the backend, and using MySQL for database management, this  system helps organizations strategically prioritize stakeholders and improve project outcomes. 
 
+[Stakeholder Management System Demonstration (youtube Link)](https://youtu.be/Um8PzzQEaus)
+
 ### Set up
 
 1. Clone the project 
@@ -30,9 +32,11 @@ This Stakeholder Management System is designed to address key gaps in traditiona
 4. Add the following configurations for the Mail Service.
 
 > ```
+> [stakeholder_management_backend.survey]
 > SMTP_EMAIL="smtp.mailtrap.io"
 > SMTP_USERNAME="<username>"
 > SMTP_PASSWORD="<password>"
+> SMTP_PORT=2525
 > ```
 
 5. Open a new terminal in the project path and run the `Metrics API`
@@ -232,7 +236,7 @@ To calculate the engagement drop:
 1. Enter the values for Ws, We, Si, and Ei for each stakeholder.
 2. Optionally, click on the info icons next to each field to open a survey that will calculate the respective value automatically.
 3. After filling out the form, click Submit Survey to calculate the normalized score for each section.
-4. Upon form submission, the application sends the data to an API (http://localhost:9091/api/engagement_drop_alert) to compute the engagement drop alert.
+4. Upon form submission, the application sends the data to an API to compute the engagement drop alert.
 
 ##### Adding New Stakeholders
 
@@ -355,3 +359,77 @@ This is for calculating the `Balanced Scorecard (BSC)` of stakeholders in a stak
 - Main form for submitting weight values and calculating the `BSC index`.
 - Handles `input validation`, `form submission`, and `communication` with the backend.
 
+### Engagement Priority Score (EPS) Calculator
+
+This is for calculating the `Engagement Priority Score (EPS)` of stakeholders in a stakeholder management system. The EPS is calculated based on various weighted factors such as `stakeholder engagement`, `influence`, `interest`, and more. These factors are input via surveys, and the scores are normalized and sent to the backend for further processing.
+
+#### Features
+
+- Dynamic surveys for collecting stakeholder data across different criteria.
+- Calculation of Engagement Priority Score (EPS) using weights for various stakeholder attributes.
+- Integration with an API to submit calculated EPS scores and retrieve results.
+
+#### Key Components
+
+##### Surveys
+
+The EPS is based on five categories, each with its own set of survey questions:
+
+1. **Engagement Weight (We)**: Measures the frequency and quality of the stakeholder’s engagement.
+2. **Influence Weight (Wi)**: Measures the formal and informal authority of the stakeholder.
+3. **Stakeholder Interest (Ws)**: Measures the stakeholder’s relevance, gain, and risks concerning the project.
+4. **Engagement Level (Ei)**: Measures the participation and communication frequency of the stakeholder.
+5. **Influence Impact (Ii)**: Measures the stakeholder's control over resources and decision-making power.
+6. **Stakeholder Impact (Si)**: Measures the impact the project has on the stakeholder's role and goals.
+
+##### UI Components
+
+1. **Survey Modal**: A dialog modal that displays survey questions to gather user input for each weight category.
+2. **Form Inputs**: Accepts values for each weight `(We, Wi, Ws, Ei, Ii, Si)`, and sends them to the backend for EPS calculation.
+3. **Result Display**: Shows the calculated EPS and the priority level of the stakeholder after form submission.
+
+##### How It Works
+
+1. **Survey Modal**: For each weight category, the user can launch a survey modal, answer the questions, and get a score. The score is normalized between 0 and 1 and used as the weight  for that category.
+
+2. **EPS Calculation**: After inputting all the required weights, the user submits the form, which sends a POST request to the backend API with the weight data.
+
+3. **Backend Integration**: The API processes the request and calculates the EPS index (EPSi) and priority level based on the input values.
+
+4. **Result Display**: Once the calculation is complete, the EPS score and priority are displayed to the user.
+
+### Total Engagement Score (TES) Calculator
+
+This is for calculating the `Total Engagement Score (TES)` of stakeholders in a stakeholder management system. The `TES` is an essential metric for assessing stakeholder engagement,  influence, and their overall contribution to an organization's success.
+
+#### Features
+
+- Surveys for evaluating key engagement factors of stakeholders.
+- Real-time calculation of the TES based on four key indicators:
+   1. Alpha (Weight for EPS) – Measures engagement performance.
+   2. Beta (Weight for BSC) – Measures the balanced scorecard index.
+   3. EPSi (Engagement Performance Score) – Quantifies the performance of stakeholder engagement.
+   4. BSCi (Balanced Scorecard Index) – Measures financial performance and internal contributions.
+- User-friendly input fields with surveys for more accurate scoring.
+- Automated calculation of TES using the entered values.
+
+#### Usage
+
+1. Fill in the `Alpha`, `Beta`, `EPSi`, and `BSCi` values through the form inputs.
+2. Use the Info buttons to open survey dialogs and help you determine more accurate scores for each factor.
+3. Submit the form to calculate the `TES`. The results include:
+   - `TESi` (Total Engagement Score Index)
+   - Priority level of the stakeholder.
+
+#### Example Surveys
+
+> The system contains multiple survey categories to guide users in scoring their stakeholders, including:
+
+1. **Alpha (EPS Weighting Survey)**: Determines engagement activity, influence, and trends.
+2. **Beta (BSC Weighting Survey)**: Evaluates financial and strategic alignment.
+3. **EPSi (Engagement Performance Survey)**: Assesses feedback quality and stakeholder consistency.
+4. **BSCi (Balanced Scorecard Survey)**: Measures stakeholder contributions to performance and innovation.
+
+### License
+
+This project is licensed under the Apache License 2.0. See the [LICENSE](./LICENSE) file for more details.
