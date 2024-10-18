@@ -83,7 +83,7 @@ export default function Navbar({ toggleSidebar }: NavbarProps) {
               className="w-8 h-8 rounded-full"
             />
             {/* <span>{username}</span> */}
-            <span>john doe</span>
+            <span>Account</span>
             <ChevronDown size={16} />
           </Button>
 
