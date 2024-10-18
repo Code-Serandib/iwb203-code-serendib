@@ -8,8 +8,6 @@ import stakeholder_management_backend.theoretical_depth;
 
 import ballerina/email;
 import ballerina/http;
-import ballerina/io;
-import ballerina/jwt;
 import ballerina/sql;
 import ballerinax/java.jdbc;
 import ballerinax/mysql.driver as _;
@@ -41,24 +39,6 @@ service /api on new http:Listener(9091) {
         };
 
         self.emailClient = check new (survey:SMTP_EMAIL, survey:SMTP_USERNAME, survey:SMTP_PASSWORD, smtpConfig);
-    }
-
-    @http:ResourceConfig {
-        auth: [
-            {
-                jwtValidatorConfig: {
-                    issuer: "codeserandib",
-                    audience: "users",
-                    signatureConfig: {
-                        certFile: "resources/codeserandib.crt"
-                    }
-                }
-            }
-        ]
-    }
-    resource function get data(http:RequestContext ctx) returns error? {
-        [jwt:Header, jwt:Payload] jwtInfo = check ctx.getWithType(http:JWT_INFORMATION);
-        io:println(jwtInfo);
     }
 
     // ********************************* Analytical insight **********************************
