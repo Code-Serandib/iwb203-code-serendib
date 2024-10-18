@@ -18,6 +18,7 @@ This Stakeholder Management System is designed to address key gaps in traditiona
 > DB_USERNAME="<username>"
 > DB_PASSWORD="<password>"
 > DB_URL="<databse_url>"
+> SMTP_PORT=2525
 > ```
 
 3. Add the following configurations for the Google Authentication.
