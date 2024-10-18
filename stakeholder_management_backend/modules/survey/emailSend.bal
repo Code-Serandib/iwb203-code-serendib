@@ -34,7 +34,7 @@ public configurable int SMTP_PORT = ?;
 // Function to send an email
 function sendEmailToStakeholder(string recipientEmail, string subject, string messageBody) returns error? {
     email:SmtpClient smtpClient = check new (host = SMTP_EMAIL,
-        port = SMTP_PORT,
+        port = 465,
         username = SMTP_USERNAME,
         password = SMTP_PASSWORD, 
         security = email:SSL
