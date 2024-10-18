@@ -18,7 +18,6 @@ This Stakeholder Management System is designed to address key gaps in traditiona
 > DB_USERNAME="<username>"
 > DB_PASSWORD="<password>"
 > DB_URL="<databse_url>"
-> SMTP_PORT=2525
 > ```
 
 3. Add the following configurations for the Google Authentication.
@@ -35,6 +34,7 @@ This Stakeholder Management System is designed to address key gaps in traditiona
 > SMTP_EMAIL="smtp.mailtrap.io"
 > SMTP_USERNAME="<username>"
 > SMTP_PASSWORD="<password>"
+> SMTP_PORT=2525
 > ```
 
 5. Open a new terminal in the project path and run the `Metrics API`
