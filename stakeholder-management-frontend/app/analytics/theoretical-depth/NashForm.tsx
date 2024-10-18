@@ -6,6 +6,8 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { ScrollArea } from "@/components/ui/scroll-area"
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
+import { AlertCircle } from "lucide-react"
 import axios from "axios"
 
 type NashMatrixProps = {
@@ -24,6 +26,7 @@ export default function NashEquilibriumCalculator() {
   const [payoffs, setPayoffs] = useState<number[]>([])
   const [nashResult, setNashResult] = useState<any | null>(null)
   const [error, setError] = useState<string | null>(null)
+  const [isPayoffsDialogOpen, setIsPayoffsDialogOpen] = useState(false)
 
   const validatePlayers = (value: string) => {
     const playerNames = value.split(",").map(name => name.trim()).filter(name => name !== "")
@@ -58,6 +61,7 @@ export default function NashEquilibriumCalculator() {
     }
     setPayoffs(newPayoffs)
     setError(null)
+    setIsPayoffsDialogOpen(false)
   }
 
   const handleNashSubmit = async (e: React.FormEvent) => {
@@ -91,9 +95,25 @@ export default function NashEquilibriumCalculator() {
     }
   }
 
+  const validateInputs = () => {
+    if (players.length === 0) {
+      setError("Please enter player names before setting payoffs.")
+      return false
+    }
+    if (optionCounts.length === 0 || optionCounts.some(count => count === 0)) {
+      setError("Please set option counts for all players before setting payoffs.")
+      return false
+    }
+    if (options.some(playerOptions => playerOptions.some(option => option === ""))) {
+      setError("Please set all options for all players before setting payoffs.")
+      return false
+    }
+    setError(null)
+    return true
+  }
+
   return (
     <div className="max-w-5xl mx-auto p-6 bg-white rounded-lg shadow-lg">
-      {/* <h2 className="text-2xl font-bold mb-6 text-center">Nash Equilibrium Calculator</h2> */}
       <form onSubmit={handleNashSubmit} className="space-y-6">
         <div className="space-y-2">
           <Label htmlFor="players">Players (2-3, comma-separated)</Label>
@@ -146,9 +166,20 @@ export default function NashEquilibriumCalculator() {
         </div>
         <div className="space-y-2">
           <Label htmlFor="payoffs">Payoffs</Label>
-          <Dialog>
+          <Dialog open={isPayoffsDialogOpen} onOpenChange={setIsPayoffsDialogOpen}>
             <DialogTrigger asChild>
-              <Button variant="outline" className="w-full">Set Payoffs</Button>
+              <Button 
+                variant="outline" 
+                className="w-full"
+                onClick={(e) => {
+                  e.preventDefault()
+                  if (validateInputs()) {
+                    setIsPayoffsDialogOpen(true)
+                  }
+                }}
+              >
+                Set Payoffs
+              </Button>
             </DialogTrigger>
             <DialogContent className="max-w-3xl">
               <DialogHeader>
@@ -164,8 +195,27 @@ export default function NashEquilibriumCalculator() {
             className="border-black"
           />
         </div>
-        {error && <p className="text-red-500">{error}</p>}
-        <Button type="submit" className="w-full bg-black text-white hover:bg-gray-800">Calculate Nash Equilibrium</Button>
+        {error && (
+          <Alert variant="destructive">
+            <AlertCircle className="h-4 w-4" />
+            <AlertTitle>Error</AlertTitle>
+            <AlertDescription>{error}</AlertDescription>
+          </Alert>
+        )}
+        <Button 
+          type="submit" 
+          className="w-full bg-black text-white hover:bg-gray-800"
+          onClick={(e) => {
+            e.preventDefault()
+            if (validateInputs() && payoffs.length > 0) {
+              handleNashSubmit(e)
+            } else if (payoffs.length === 0) {
+              setError("Please set payoffs before calculating Nash Equilibrium.")
+            }
+          }}
+        >
+          Calculate Nash Equilibrium
+        </Button>
       </form>
       
       {nashResult && (
@@ -325,6 +375,7 @@ function NashMatrixDisplay({ matrix }: NashMatrixProps) {
                   ) : (
                     `${players[1]}: ${options[1][rowIndex]}`
                   )}
+                
                 </TableCell>
                 {row.map((cell, colIndex) => (
                   <TableCell key={colIndex} className="p-0">

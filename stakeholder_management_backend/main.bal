@@ -32,7 +32,7 @@ service /api on new http:Listener(9091) {
         self.metricsAPIClient = check new ("http://localhost:9090/stakeholder-analytics");
         self.dbClient = check new jdbc:Client(jdbcUrl);
         check initDatabase(self.dbClient);
-
+        
         email:SmtpConfiguration smtpConfig = {
             port: survey:SMTP_PORT,
             security: email:START_TLS_AUTO

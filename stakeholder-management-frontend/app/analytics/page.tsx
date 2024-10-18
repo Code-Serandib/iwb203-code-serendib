@@ -42,23 +42,6 @@ export default function StakeholderAnalyticsPage() {
       <div className="min-h-screen bg-gradient-to-br from-gray-100 to-white p-8">
         <div className="max-w-6xl mx-auto">
           
-          {/* API Key Notification Section */}
-          <div className="bg-yellow-50 border-l-4 border-yellow-400 p-4 mb-8 rounded-md shadow-md">
-            <div className="flex items-center justify-between">
-              <div>
-                <h2 className="text-lg font-semibold text-yellow-800">API Key Required</h2>
-                <p className="text-yellow-700">
-                  To use the Stakeholder Analytics Hub, you need to generate an API key. This key will provide you access to all the available analytics tools.
-                </p>
-              </div>
-              <Link href="/api-manage" passHref>
-                <Button className="bg-yellow-600 text-white hover:bg-yellow-700 transition-colors duration-300">
-                  Generate API Key
-                </Button>
-              </Link>
-            </div>
-          </div>
-
           <header className="text-center mb-12">
             <h1 className="text-4xl font-bold text-black mb-4">Stakeholder Analytics Hub</h1>
             <p className="text-xl text-gray-600">Unlock the power of data-driven stakeholder management</p>
