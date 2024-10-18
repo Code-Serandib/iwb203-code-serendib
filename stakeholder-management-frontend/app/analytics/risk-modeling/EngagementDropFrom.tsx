@@ -208,7 +208,7 @@ export default function EngagementDropForm() {
                         <h3 className="text-lg font-semibold">Stakeholder {index + 1}</h3>
                         <div className="space-y-2">
                             <div className="flex items-center space-x-2">
-                                <Label htmlFor={`Ws-${index}`}>Ws (Stakeholder Weight Start)</Label>
+                                <Label htmlFor={`Ws-${index}`}>Ws (Stakeholder Weight Start) 0 - 5</Label>
                                 <Dialog>
                                     <DialogTrigger asChild>
                                         <Button variant="ghost" size="icon" className="h-8 w-8">
@@ -230,12 +230,12 @@ export default function EngagementDropForm() {
                                 onChange={e => handleInputChange(index, 'Ws', e.target.value)}
                                 step="0.01"
                                 min="0"
-                                max="1"
+                                max="5"
                             />
                         </div>
                         <div className="space-y-2">
                             <div className="flex items-center space-x-2">
-                                <Label htmlFor={`We-${index}`}>We (Stakeholder Weight End)</Label>
+                                <Label htmlFor={`We-${index}`}>We (Stakeholder Weight End) 0 - 5</Label>
                                 <Dialog>
                                     <DialogTrigger asChild>
                                         <Button variant="ghost" size="icon" className="h-8 w-8">
@@ -257,12 +257,12 @@ export default function EngagementDropForm() {
                                 onChange={e => handleInputChange(index, 'We', e.target.value)}
                                 step="0.01"
                                 min="0"
-                                max="1"
+                                max="5"
                             />
                         </div>
                         <div className="space-y-2">
                             <div className="flex items-center space-x-2">
-                                <Label htmlFor={`Si-${index}`}>Si (Stakeholder Influence)</Label>
+                                <Label htmlFor={`Si-${index}`}>Si (Stakeholder Influence) 0 - 5</Label>
                                 <Dialog>
                                     <DialogTrigger asChild>
                                         <Button variant="ghost" size="icon" className="h-8 w-8">
@@ -284,12 +284,12 @@ export default function EngagementDropForm() {
                                 onChange={e => handleInputChange(index, 'Si', e.target.value)}
                                 step="0.01"
                                 min="0"
-                                max="1"
+                                max="5"
                             />
                         </div>
                         <div className="space-y-2">
                             <div className="flex items-center space-x-2">
-                                <Label htmlFor={`Ei-${index}`}>Ei (Engagement Influence)</Label>
+                                <Label htmlFor={`Ei-${index}`}>Ei (Engagement Influence) 0 - 5</Label>
                                 <Dialog>
                                     <DialogTrigger asChild>
                                         <Button variant="ghost" size="icon" className="h-8 w-8">
@@ -311,7 +311,7 @@ export default function EngagementDropForm() {
                                 onChange={e => handleInputChange(index, 'Ei', e.target.value)}
                                 step="0.01"
                                 min="0"
-                                max="1"
+                                max="5"
                             />
                         </div>
                     </div>
@@ -321,7 +321,7 @@ export default function EngagementDropForm() {
 
                 <div className="space-y-2">
                     <div className="flex items-center space-x-2">
-                        <Label htmlFor="Te">Te (Threshold Engagement)</Label>
+                        <Label htmlFor="Te">Te (Threshold Engagement) 0 - 1</Label>
                         <Dialog>
                             <DialogTrigger asChild>
                                 <Button variant="ghost" size="icon" className="h-8 w-8">

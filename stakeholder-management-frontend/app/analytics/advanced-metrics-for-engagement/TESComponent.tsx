@@ -186,7 +186,7 @@ export default function TESComponent() {
       <form onSubmit={calculateTES} className="space-y-6">
         <div className="space-y-2">
           <div className="flex items-center space-x-2">
-            <Label htmlFor="alpha">Alpha (Weight for EPS)</Label>
+            <Label htmlFor="alpha">Alpha (Weight for EPS) 0 - 1</Label>
             <Dialog>
               <DialogTrigger asChild>
                 <Button variant="ghost" size="icon" className="h-8 w-8">
@@ -215,7 +215,7 @@ export default function TESComponent() {
         </div>
         <div className="space-y-2">
           <div className="flex items-center space-x-2">
-            <Label htmlFor="beta">Beta (Weight for BSC)</Label>
+            <Label htmlFor="beta">Beta (Weight for BSC) 0 - 1</Label>
             <Dialog>
               <DialogTrigger asChild>
                 <Button variant="ghost" size="icon" className="h-8 w-8">
@@ -244,7 +244,7 @@ export default function TESComponent() {
         </div>
         <div className="space-y-2">
           <div className="flex items-center space-x-2">
-            <Label htmlFor="EPSi">EPSi (Engagement Performance Score)</Label>
+            <Label htmlFor="EPSi">EPSi (Engagement Performance Score) 0 - 1</Label>
             <Dialog>
               <DialogTrigger asChild>
                 <Button variant="ghost" size="icon" className="h-8 w-8">
@@ -273,7 +273,7 @@ export default function TESComponent() {
         </div>
         <div className="space-y-2">
           <div className="flex items-center space-x-2">
-            <Label htmlFor="BSCi">BSCi (Balanced Scorecard Index)</Label>
+            <Label htmlFor="BSCi">BSCi (Balanced Scorecard Index) 0 - 1</Label>
             <Dialog>
               <DialogTrigger asChild>
                 <Button variant="ghost" size="icon" className="h-8 w-8">

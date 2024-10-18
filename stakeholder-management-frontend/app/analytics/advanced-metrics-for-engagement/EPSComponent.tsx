@@ -210,7 +210,7 @@ export default function EPSComponent() {
       <form onSubmit={calculateEPS} className="space-y-6">
         <div className="space-y-2">
           <div className="flex items-center space-x-2">
-            <Label htmlFor="We">We (Weight for Engagement)</Label>
+            <Label htmlFor="We">We (Weight for Engagement) 0 - 1</Label>
             <Dialog>
               <DialogTrigger asChild>
                 <Button variant="ghost" size="icon" className="h-8 w-8">
@@ -238,7 +238,7 @@ export default function EPSComponent() {
         </div>
         <div className="space-y-2">
           <div className="flex items-center space-x-2">
-            <Label htmlFor="Wi">Wi (Weight for Influence)</Label>
+            <Label htmlFor="Wi">Wi (Weight for Influence) 0 - 1</Label>
             <Dialog>
               <DialogTrigger asChild>
                 <Button variant="ghost" size="icon" className="h-8 w-8">
@@ -266,7 +266,7 @@ export default function EPSComponent() {
         </div>
         <div className="space-y-2">
           <div className="flex items-center space-x-2">
-            <Label htmlFor="Ws">Ws (Weight for Stakeholder Interest)</Label>
+            <Label htmlFor="Ws">Ws (Weight for Stakeholder Interest) 0 - 1</Label>
             <Dialog>
               <DialogTrigger asChild>
                 <Button variant="ghost" size="icon" className="h-8 w-8">
@@ -294,7 +294,7 @@ export default function EPSComponent() {
         </div>
         <div className="space-y-2">
           <div className="flex items-center space-x-2">
-            <Label htmlFor="Ei">Ei (Engagement Level)</Label>
+            <Label htmlFor="Ei">Ei (Engagement Level) 0 - 10</Label>
             <Dialog>
               <DialogTrigger asChild>
                 <Button variant="ghost" size="icon" className="h-8 w-8">
@@ -322,7 +322,7 @@ export default function EPSComponent() {
         </div>
         <div className="space-y-2">
           <div className="flex items-center space-x-2">
-            <Label htmlFor="Ii">Ii (Influence Level)</Label>
+            <Label htmlFor="Ii">Ii (Influence Level) 0 - 10</Label>
             <Dialog>
               <DialogTrigger asChild>
                 <Button variant="ghost" size="icon" className="h-8 w-8">
@@ -350,7 +350,7 @@ export default function EPSComponent() {
         </div>
         <div className="space-y-2">
           <div className="flex items-center space-x-2">
-            <Label htmlFor="Si">Si (Stakeholder Interest)</Label>
+            <Label htmlFor="Si">Si (Stakeholder Interest) 0 - 10</Label>
             <Dialog>
               <DialogTrigger asChild>
                 <Button variant="ghost" size="icon" className="h-8 w-8">

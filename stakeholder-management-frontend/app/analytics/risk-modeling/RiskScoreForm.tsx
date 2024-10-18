@@ -186,7 +186,7 @@ export default function RiskScoreForm() {
             <form onSubmit={calculateRiskScore} className="space-y-6">
                 <div className="space-y-2">
                     <div className="flex items-center space-x-2">
-                        <Label htmlFor="Ws">Ws (Stakeholder Weight Start)</Label>
+                        <Label htmlFor="Ws">Ws (Stakeholder Weight Start) 0 - 1</Label>
                         <Dialog>
                             <DialogTrigger asChild>
                                 <Button variant="ghost" size="icon" className="h-8 w-8">
@@ -214,7 +214,7 @@ export default function RiskScoreForm() {
                 </div>
                 <div className="space-y-2">
                     <div className="flex items-center space-x-2">
-                        <Label htmlFor="We">We (Stakeholder Weight End)</Label>
+                        <Label htmlFor="We">We (Stakeholder Weight End) 0 - 1</Label>
                         <Dialog>
                             <DialogTrigger asChild>
                                 <Button variant="ghost" size="icon" className="h-8 w-8">
@@ -242,7 +242,7 @@ export default function RiskScoreForm() {
                 </div>
                 <div className="space-y-2">
                     <div className="flex items-center space-x-2">
-                        <Label htmlFor="Si">Si (Stakeholder Influence)</Label>
+                        <Label htmlFor="Si">Si (Stakeholder Influence) 0 - 1</Label>
                         <Dialog>
                             <DialogTrigger asChild>
                                 <Button variant="ghost" size="icon" className="h-8 w-8">
@@ -270,7 +270,7 @@ export default function RiskScoreForm() {
                 </div>
                 <div className="space-y-2">
                     <div className="flex items-center space-x-2">
-                        <Label htmlFor="Ei">Ei (Engagement Influence)</Label>
+                        <Label htmlFor="Ei">Ei (Engagement Influence) 0 - 1</Label>
                         <Dialog>
                             <DialogTrigger asChild>
                                 <Button variant="ghost" size="icon" className="h-8 w-8">

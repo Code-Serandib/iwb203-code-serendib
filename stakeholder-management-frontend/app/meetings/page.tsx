@@ -86,9 +86,6 @@ export default function MeetingsPage() {
             axios.get(`http://localhost:9091/api/getAllStakeholder`, {
                 params: {
                     user_email: userEmail
-                },
-                headers: {
-                    // Authorization: `Bearer ${token}`
                 }
             })
                 .then(response => {
@@ -289,20 +286,29 @@ export default function MeetingsPage() {
                             </TableRow>
                         </TableHeader>
                         <TableBody>
-                            {meetings.map(meeting => (
-                                <TableRow key={meeting.id}>
-                                    <TableCell>{meeting.title}</TableCell>
-                                    <TableCell>{meeting.meeting_date}</TableCell>
-                                    <TableCell>{meeting.meeting_time}</TableCell>
-                                    <TableCell>
-                                        <Button onClick={() => handleMeetingClick(meeting.id)} className="bg-black text-white hover:bg-gray-800">
-                                            View Details
-                                        </Button>
+                            {meetings.length === 0 ? (
+                                <TableRow>
+                                    <TableCell colSpan={4} className="text-center p-4 text-gray-500">
+                                        No meetings found
                                     </TableCell>
                                 </TableRow>
-                            ))}
+                            ) : (
+                                meetings.map(meeting => (
+                                    <TableRow key={meeting.id}>
+                                        <TableCell>{meeting.title}</TableCell>
+                                        <TableCell>{meeting.meeting_date}</TableCell>
+                                        <TableCell>{meeting.meeting_time}</TableCell>
+                                        <TableCell>
+                                            <Button onClick={() => handleMeetingClick(meeting.id)} className="bg-black text-white hover:bg-gray-800">
+                                                View Details
+                                            </Button>
+                                        </TableCell>
+                                    </TableRow>
+                                ))
+                            )}
                         </TableBody>
                     </Table>
+
                 </div>
             </div>
 

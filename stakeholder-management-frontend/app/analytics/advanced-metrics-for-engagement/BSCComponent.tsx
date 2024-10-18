@@ -282,7 +282,7 @@ export default function BSCForm() {
       <form onSubmit={calculateBSC} className="space-y-6">
         <div className="space-y-2">
           <div className="flex items-center space-x-2">
-            <Label htmlFor="Wf">Wf (Weight for Financial)</Label>
+            <Label htmlFor="Wf">Wf (Weight for Financial)  0 - 1</Label>
             <Dialog>
               <DialogTrigger asChild>
                 <Button variant="ghost" size="icon" className="h-8 w-8">
@@ -310,7 +310,7 @@ export default function BSCForm() {
         </div>
         <div className="space-y-2">
           <div className="flex items-center space-x-2">
-            <Label htmlFor="Wc">Wc (Weight for Customer)</Label>
+            <Label htmlFor="Wc">Wc (Weight for Customer)  0 - 1</Label>
             <Dialog>
               <DialogTrigger asChild>
                 <Button variant="ghost" size="icon" className="h-8 w-8">
@@ -338,7 +338,7 @@ export default function BSCForm() {
         </div>
         <div className="space-y-2">
           <div className="flex items-center space-x-2">
-            <Label htmlFor="Wp">Wp (Weight for Process)</Label>
+            <Label htmlFor="Wp">Wp (Weight for Process)  0 - 1</Label>
             <Dialog>
               <DialogTrigger asChild>
                 <Button variant="ghost" size="icon" className="h-8 w-8">
@@ -367,7 +367,7 @@ export default function BSCForm() {
         </div>
         <div className="space-y-2">
           <div className="flex items-center space-x-2">
-            <Label htmlFor="Wl">Wl (Weight for Learning & Growth)</Label>
+            <Label htmlFor="Wl">Wl (Weight for Learning & Growth) 0 - 1</Label>
             <Dialog>
               <DialogTrigger asChild>
                 <Button variant="ghost" size="icon" className="h-8 w-8">
@@ -395,7 +395,7 @@ export default function BSCForm() {
         </div>
         <div className="space-y-2">
           <div className="flex items-center space-x-2">
-            <Label htmlFor="Fi">Fi (Financial Impact)</Label>
+            <Label htmlFor="Fi">Fi (Financial Impact) 0 - 5</Label>
             <Dialog>
               <DialogTrigger asChild>
                 <Button variant="ghost" size="icon" className="h-8 w-8">
@@ -423,7 +423,7 @@ export default function BSCForm() {
         </div>
         <div className="space-y-2">
           <div className="flex items-center space-x-2">
-            <Label htmlFor="Ci">Ci (Customer Impact)</Label>
+            <Label htmlFor="Ci">Ci (Customer Impact) 0 - 5</Label>
             <Dialog>
               <DialogTrigger asChild>
                 <Button variant="ghost" size="icon" className="h-8 w-8">
@@ -451,7 +451,7 @@ export default function BSCForm() {
         </div>
         <div className="space-y-2">
           <div className="flex items-center space-x-2">
-            <Label htmlFor="Pi">Pi (Process Impact)</Label>
+            <Label htmlFor="Pi">Pi (Process Impact) 0 - 5</Label>
             <Dialog>
               <DialogTrigger asChild>
                 <Button variant="ghost" size="icon" className="h-8 w-8">
@@ -479,7 +479,7 @@ export default function BSCForm() {
         </div>
         <div className="space-y-2">
           <div className="flex items-center space-x-2">
-            <Label htmlFor="Li">Li (Learning & Growth Impact)</Label>
+            <Label htmlFor="Li">Li (Learning & Growth Impact) 0 - 5</Label>
             <Dialog>
               <DialogTrigger asChild>
                 <Button variant="ghost" size="icon" className="h-8 w-8">

@@ -235,7 +235,7 @@ export default function ProjectRiskForm() {
                         <h3 className="font-semibold">Risk Input Set {index + 1}</h3>
                         <div className="space-y-2">
                             <div className="flex items-center space-x-2">
-                                <Label htmlFor={`Ws${index}`}>Ws (Stakeholder Weight Start)</Label>
+                                <Label htmlFor={`Ws${index}`}>Ws (Stakeholder Weight Start) 0 - 5</Label>
                                 <Dialog>
                                     <DialogTrigger asChild>
                                         <Button variant="ghost" size="icon" className="h-8 w-8">
@@ -254,7 +254,7 @@ export default function ProjectRiskForm() {
                                 id={`Ws${index}`}
                                 name={`Ws${index}`}
                                 min={0}
-                                max={1}
+                                max={5}
                                 step={0.01}
                                 value={input.Ws}
                                 onChange={(e) => handleRiskInputChange(index, 'Ws', parseFloat(e.target.value))}
@@ -263,7 +263,7 @@ export default function ProjectRiskForm() {
                         </div>
                         <div className="space-y-2">
                             <div className="flex items-center space-x-2">
-                                <Label htmlFor={`We${index}`}>We (Stakeholder Weight End)</Label>
+                                <Label htmlFor={`We${index}`}>We (Stakeholder Weight End) 0 - 5</Label>
                                 <Dialog>
                                     <DialogTrigger asChild>
                                         <Button variant="ghost" size="icon" className="h-8 w-8">
@@ -282,7 +282,7 @@ export default function ProjectRiskForm() {
                                 id={`We${index}`}
                                 name={`We${index}`}
                                 min={0}
-                                max={1}
+                                max={5}
                                 step={0.01}
                                 value={input.We}
                                 onChange={(e) => handleRiskInputChange(index, 'We', parseFloat(e.target.value))}
@@ -291,7 +291,7 @@ export default function ProjectRiskForm() {
                         </div>
                         <div className="space-y-2">
                             <div className="flex items-center space-x-2">
-                                <Label htmlFor={`Si${index}`}>Si (Stakeholder Influence)</Label>
+                                <Label htmlFor={`Si${index}`}>Si (Stakeholder Influence) 0 - 5</Label>
                                 <Dialog>
                                     <DialogTrigger asChild>
                                         <Button variant="ghost" size="icon" className="h-8 w-8">
@@ -310,7 +310,7 @@ export default function ProjectRiskForm() {
                                 id={`Si${index}`}
                                 name={`Si${index}`}
                                 min={0}
-                                max={1}
+                                max={5}
                                 step={0.01}
                                 value={input.Si}
                                 onChange={(e) => handleRiskInputChange(index, 'Si', parseFloat(e.target.value))}
@@ -319,7 +319,7 @@ export default function ProjectRiskForm() {
                         </div>
                         <div className="space-y-2">
                             <div className="flex items-center space-x-2">
-                                <Label htmlFor={`Ei${index}`}>Ei (Engagement Influence)</Label>
+                                <Label htmlFor={`Ei${index}`}>Ei (Engagement Influence) 0 - 5</Label>
                                 <Dialog>
                                     <DialogTrigger asChild>
                                         <Button variant="ghost" size="icon" className="h-8 w-8">
@@ -339,7 +339,7 @@ export default function ProjectRiskForm() {
                                 
                                 name={`Ei${index}`}
                                 min={0}
-                                max={1}
+                                max={5}
                                 step={0.01}
                                 value={input.Ei}
                                 onChange={(e) => handleRiskInputChange(index, 'Ei', parseFloat(e.target.value))}
@@ -348,7 +348,7 @@ export default function ProjectRiskForm() {
                         </div>
                         <div className="space-y-2">
                             <div className="flex items-center space-x-2">
-                                <Label htmlFor={`influence${index}`}>Influence</Label>
+                                <Label htmlFor={`influence${index}`}>Influence 0 - 1</Label>
                                 <Dialog>
                                     <DialogTrigger asChild>
                                         <Button variant="ghost" size="icon" className="h-8 w-8">
